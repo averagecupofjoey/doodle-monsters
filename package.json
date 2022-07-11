@@ -10,10 +10,17 @@
     "@chakra-ui/react": "^2.2.1",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
+    "@mantine/core": "^4.2.12",
+    "@mantine/hooks": "^4.2.12",
+    "@mantine/next": "^4.2.12",
     "framer-motion": "^6.3.16",
     "next": "latest",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-canvas-draw": "^1.2.1",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.4.0",
+    "recoil": "^0.7.4",
+    "tabler-icons-react": "^1.52.0"
   },
   "devDependencies": {
     "@types/node": "^12.12.21",

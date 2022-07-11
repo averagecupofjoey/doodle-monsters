@@ -1,0 +1,60 @@
+.footerMenu {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 85px;
+  background-color: gray;
+  z-index: 1000;
+  border: 2px solid black;
+  border-radius: 1%;
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+}
+
+.footerGrid {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: 90%;
+  max-width: 288px;
+  height: 72vh;
+  border: 2px solid black;
+  border-radius: 2%;
+  background-color: tan;
+
+}
+
+.cardImage {
+  height: 56%;
+}
+
+.cardHeader{
+  border-bottom: 2px solid black;
+}
+
+.cardOptions {
+  border: 2px solid black;
+  border-width: 2px 0 2px 0;
+  display: flex;
+  justify-content: center;
+  align-items: stretch
+
+}
+
+.cardBottom {
+  display: flex;
+  /* align-items: center; */
+  justify-content: center;
+  margin-top: 5px;
+}

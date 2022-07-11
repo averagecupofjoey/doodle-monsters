@@ -2,10 +2,19 @@ import React, { ReactNode } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 
+import { HeaderMenu } from './Header'
+import FooterMenu from './Footer'
+
 type Props = {
-  children?: ReactNode
+  children: ReactNode | undefined
   title?: string
 }
+
+{/* <Layout title="shshfdlskajfsaljk">
+  <div>
+    <li></li>
+  </div>
+</Layout> */}
 
 const Layout = ({ children, title = 'This is the default title' }: Props) => (
   <div>
@@ -14,7 +23,8 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
       <meta charSet="utf-8" />
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
-    <header>
+    <HeaderMenu />
+    {/* <header>
       <nav>
         <Link href="/">
           <a>Home</a>
@@ -26,15 +36,19 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
         |{' '}
         <Link href="/users">
           <a>Users List</a>
+        </Link> |{' '}
+        <Link href="/login">
+          <a>Login</a>
         </Link>{' '}
         | <a href="/api/users">Users API</a>
       </nav>
-    </header>
+    </header> */}
     {children}
-    <footer>
+    {/* <footer>
       <hr />
       <span>I'm here to stay (Footer)</span>
-    </footer>
+    </footer> */}
+    <FooterMenu />
   </div>
 )
 
