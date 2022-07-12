@@ -27,11 +27,13 @@
 
 .card {
   width: 90%;
-  max-width: 288px;
-  height: 72vh;
+  /* max-width: 288px; */
+  max-width: 550px;
+  /* height: 72vh; */
   border: 2px solid black;
   border-radius: 2%;
   background-color: tan;
+  aspect-ratio: 1/1.8;
 
 }
 
@@ -57,4 +59,11 @@
   /* align-items: center; */
   justify-content: center;
   margin-top: 5px;
+}
+
+.appWrapper {
+  max-width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
