@@ -55,10 +55,22 @@
 }
 
 .cardBottom {
-  display: flex;
+  /* display: flex; */
   /* align-items: center; */
-  justify-content: center;
+  /* justify-content: center; */
   margin-top: 5px;
+}
+
+.colorContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.sliderContainer {
+  width: 75%;
+  margin-top: 5px;
+
+
 }
 
 .appWrapper {
