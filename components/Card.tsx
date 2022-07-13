@@ -1,10 +1,10 @@
 import { Grid, ColorPicker, Slider, Container } from '@mantine/core';
 import CanvasDraw from 'react-canvas-draw';
-import { FC, useState } from 'react';
+import React, { FC, useState, useRef } from 'react';
 import { RiDeleteBin6Fill, RiEraserLine } from 'react-icons/ri';
 import { GrFormNextLink } from 'react-icons/gr';
 import { useElementSize } from '@mantine/hooks';
-import { FaPencilRuler } from 'react-icons/fa';
+import { FaPencilRuler, FaPencilAlt } from 'react-icons/fa';
 
 const WHITE = '#ffffff';
 
@@ -46,7 +46,7 @@ export default function Card({
 }) {
   const [color, updateColor] = useState('#4dabf7');
   const [erase, toggleErase] = useState(false);
-  const [nextSelected, updateNextSelected] = useState(false);
+  const [nextSelected, setNextSelected] = useState(false);
 
   const [value, setValue] = useState(1);
   const [endValue, setEndValue] = useState(50);
@@ -58,7 +58,24 @@ export default function Card({
     width: imageWidth,
     height: imageHeight,
   } = useElementSize();
-  console.log(erase);
+
+  // const canvasRef = useRef<CanvasDraw>(null);
+
+  // const onDelete = () => {
+  //   canvasRef.current?.eraseAll();
+  // };
+
+  const canvasRef = React.createRef();
+
+  const onDelete = () => {
+    console.log(canvasRef);
+    canvasRef.current?.eraseAll();
+  };
+
+  const onNext = () => {
+    localStorage.setItem('savedDrawing', canvasRef.current?.getSaveData());
+    setNextSelected(true);
+  };
 
   return (
     <>
@@ -66,19 +83,31 @@ export default function Card({
         <div className='card'>
           <div className='cardHeader'>{userName}</div>
           <div className='cardImage' ref={imageRef}>
-            {imageWidth && imageHeight && (
+            {imageWidth && imageHeight && !nextSelected && (
               <CanvasDraw
+                ref={canvasRef}
+                // ref={(canvasDraw) => (this.saveableCanvas = canvasDraw)}
                 canvasWidth={imageWidth}
                 canvasHeight={imageHeight}
                 brushRadius={radiusValue}
                 brushColor={erase ? WHITE : color}
               />
             )}
+
+            {imageWidth && imageHeight && nextSelected && (
+              <CanvasDraw
+                disabled
+                hideGrid
+                canvasWidth={imageWidth}
+                canvasHeight={imageHeight}
+                saveData={localStorage.getItem('savedDrawing')}
+              />
+            )}
           </div>
           <div className='cardOptions'>
             <Grid sx={{ flex: '1' }} justify='center' gutter={0}>
               <ColWrapper>
-                <RiDeleteBin6Fill />
+                <RiDeleteBin6Fill onClick={onDelete} />
                 Delete
               </ColWrapper>
               {/* <div onClick={() => toggleErase(!erase)}> */}
@@ -93,7 +122,7 @@ export default function Card({
                 </ColWrapper>
               ) : (
                 <ColWrapper>
-                  <RiEraserLine
+                  <FaPencilAlt
                     onClick={() => {
                       toggleErase(false);
                       // updateColor(WHITE);
@@ -104,7 +133,7 @@ export default function Card({
               )}
               {!nextSelected ? (
                 <ColWrapper>
-                  <GrFormNextLink onClick={() => updateNextSelected(true)} />
+                  <GrFormNextLink onClick={onNext} />
                   Next
                 </ColWrapper>
               ) : (
