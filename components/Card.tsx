@@ -1,4 +1,11 @@
-import { Grid, ColorPicker, Slider, Container } from '@mantine/core';
+import {
+  Grid,
+  ColorPicker,
+  Slider,
+  Container,
+  TextInput,
+  Button,
+} from '@mantine/core';
 import CanvasDraw from 'react-canvas-draw';
 import React, { FC, useState, useRef } from 'react';
 import { RiDeleteBin6Fill, RiEraserLine } from 'react-icons/ri';
@@ -74,8 +81,15 @@ export default function Card({
 
   const onNext = () => {
     localStorage.setItem('savedDrawing', canvasRef.current?.getSaveData());
+    console.log(canvasRef.current?.getDataURL());
     setNextSelected(true);
   };
+
+  const onSave = () => {
+    console.log(inputRef.current.value);
+  };
+
+  const inputRef = useRef<HTMLInputElement>();
 
   return (
     <>
@@ -138,26 +152,29 @@ export default function Card({
                 </ColWrapper>
               ) : (
                 <ColWrapper>
-                  <GrFormNextLink />
-                  Save
+                  <Button onClick={onSave}>
+                    <GrFormNextLink />
+                    Save
+                  </Button>
                 </ColWrapper>
               )}
             </Grid>
           </div>
-          <div className='cardBottom'>
-            <div className='colorContainer'>
-              <ColorPicker
-                value={erase ? WHITE : color}
-                onChange={(color) => {
-                  if (erase) {
-                    return;
-                  }
-                  updateColor(color);
-                }}
-                size='xs'
-              />
-            </div>
-            {/* <Slider
+          {!nextSelected && (
+            <div className='cardBottom'>
+              <div className='colorContainer'>
+                <ColorPicker
+                  value={erase ? WHITE : color}
+                  onChange={(color) => {
+                    if (erase) {
+                      return;
+                    }
+                    updateColor(color);
+                  }}
+                  size='xs'
+                />
+              </div>
+              {/* <Slider
               label={(val) => MARKS.find((mark) => mark.value === val).label}
               defaultValue={1}
               min={1}
@@ -166,25 +183,31 @@ export default function Card({
               marks={MARKS}
               styles={{ markLabel: { display: 'none' } }}
             /> */}
-            {/* <Slider
+              {/* <Slider
               label={(val) => MARKS.find((mark) => mark.value === val).label}
               defaultValue={50}
               step={25}
               marks={MARKS}
               styles={{ markLabel: { display: 'none' } }}
             /> */}
-            <Container className='sliderContainer'>
-              <FaPencilRuler />
-              <Slider
-                value={value}
-                min={1}
-                max={10}
-                onChange={setValue}
-                // onChangeEnd={setEndValue}
-                onChangeEnd={setRadiusValue}
-              />
-            </Container>
-          </div>
+              <Container className='sliderContainer'>
+                <FaPencilRuler />
+                <Slider
+                  value={value}
+                  min={1}
+                  max={10}
+                  onChange={setValue}
+                  // onChangeEnd={setEndValue}
+                  onChangeEnd={setRadiusValue}
+                />
+              </Container>
+            </div>
+          )}
+          {nextSelected && (
+            // <div className='cardBottom'>
+            <TextInput ref={inputRef} />
+            // </div>
+          )}
         </div>
       </div>
       {/* <CanvasDraw canvasWidth="100" canvasHeight="100"/> */}

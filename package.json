@@ -11,6 +11,7 @@
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@mantine/core": "^4.2.12",
+    "@mantine/form": "^4.2.12",
     "@mantine/hooks": "^4.2.12",
     "@mantine/next": "^4.2.12",
     "framer-motion": "^6.3.16",
