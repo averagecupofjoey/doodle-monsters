@@ -223,9 +223,9 @@ export default function Card({
             </div>
           )}
           {nextSelected && (
-            // <div className='cardBottom'>
-            <Textarea ref={descriptionRef} />
-            // </div>
+            <div className='cardBottomDesc'>
+              <Textarea ref={descriptionRef} />
+            </div>
           )}
         </div>
       </div>

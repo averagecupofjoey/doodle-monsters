@@ -61,6 +61,10 @@
   margin-top: 5px;
 }
 
+.cardBottomDesc {
+
+}
+
 .colorContainer {
   display: flex;
   justify-content: center;
