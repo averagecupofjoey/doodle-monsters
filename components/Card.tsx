@@ -4,6 +4,7 @@ import {
   Slider,
   Container,
   TextInput,
+  Textarea,
   Button,
 } from '@mantine/core';
 import CanvasDraw from 'react-canvas-draw';
@@ -47,13 +48,14 @@ const ColWrapper: FC = ({ children }) => {
 };
 
 export default function Card({
-  monsterName = 'test',
+  monster = 'test',
   userName = 'John Smith',
   monsterString = 'null',
 }) {
   const [color, updateColor] = useState('#4dabf7');
   const [erase, toggleErase] = useState(false);
   const [nextSelected, setNextSelected] = useState(false);
+  const [monsterName, updateMonsterName] = useState(null);
 
   const [value, setValue] = useState(1);
   const [endValue, setEndValue] = useState(50);
@@ -80,22 +82,39 @@ export default function Card({
   };
 
   const onNext = () => {
+    //We use this to draw the uneditable image on the next step
     localStorage.setItem('savedDrawing', canvasRef.current?.getSaveData());
+
+    //This will store the base64 image to submit to database
     console.log(canvasRef.current?.getDataURL());
     setNextSelected(true);
   };
 
   const onSave = () => {
-    console.log(inputRef.current.value);
+    // This will be where we save the information to the database
+    console.log(descriptionRef.current.value);
   };
 
-  const inputRef = useRef<HTMLInputElement>();
+  const descriptionRef = useRef<HTMLTextAreaElement>();
+  const nameRef = useRef<HTMLInputElement>();
 
   return (
     <>
       <div className='cardContainer'>
         <div className='card'>
-          <div className='cardHeader'>{userName}</div>
+          <div className='cardHeader'>
+            <Grid justify='space-between' align='center'>
+              <Grid.Col span={6}>
+                <TextInput
+                  ref={nameRef}
+                  size='xs'
+                  placeholder='Monster name'
+                  style={{ backgroundColor: 'transparent' }}
+                ></TextInput>
+              </Grid.Col>
+              <Grid.Col span={6}>by: {userName}</Grid.Col>
+            </Grid>
+          </div>
           <div className='cardImage' ref={imageRef}>
             {imageWidth && imageHeight && !nextSelected && (
               <CanvasDraw
@@ -205,7 +224,7 @@ export default function Card({
           )}
           {nextSelected && (
             // <div className='cardBottom'>
-            <TextInput ref={inputRef} />
+            <Textarea ref={descriptionRef} />
             // </div>
           )}
         </div>

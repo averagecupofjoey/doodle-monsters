@@ -1,9 +1,18 @@
 import React from 'react';
-import { createStyles, Header, Menu, Group, Center, Burger, Container } from '@mantine/core';
+import {
+  createStyles,
+  Header,
+  Menu,
+  Group,
+  Center,
+  Burger,
+  Container,
+} from '@mantine/core';
 import { useBooleanToggle } from '@mantine/hooks';
 import { ChevronDown } from 'tabler-icons-react';
-import {FaPencilAlt } from 'react-icons/fa'
-import {CgProfile} from 'react-icons/cg'
+import { FaPencilAlt } from 'react-icons/fa';
+import { CgProfile } from 'react-icons/cg';
+import Link from 'next/link';
 const useStyles = createStyles((theme) => ({
   header: {
     backgroundColor: theme.colors[theme.primaryColor][6],
@@ -40,7 +49,8 @@ const useStyles = createStyles((theme) => ({
     fontWeight: 500,
 
     '&:hover': {
-      backgroundColor: theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 7 : 5],
+      backgroundColor:
+        theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 7 : 5],
     },
   },
 
@@ -176,11 +186,11 @@ export function HeaderMenu() {
         <div className={classes.inner}>
           <FaPencilAlt />
           Doodle Monsters
-
           {/* <Group spacing={5} className={classes.links}> */}
-            {/* {items} */}
-          <CgProfile />
-
+          {/* {items} */}
+          <Link href='/profile'>
+            <CgProfile />
+          </Link>
           {/* </Group> */}
           {/* <Burger
             opened={opened}
