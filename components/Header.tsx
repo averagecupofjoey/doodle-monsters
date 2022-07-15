@@ -189,7 +189,9 @@ export function HeaderMenu() {
           {/* <Group spacing={5} className={classes.links}> */}
           {/* {items} */}
           <Link href='/profile'>
-            <CgProfile />
+            <a>
+              <CgProfile />
+            </a>
           </Link>
           {/* </Group> */}
           {/* <Burger
