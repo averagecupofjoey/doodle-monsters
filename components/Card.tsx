@@ -74,7 +74,8 @@ export default function Card({
   //   canvasRef.current?.eraseAll();
   // };
 
-  const canvasRef = React.createRef();
+  // const canvasRef = React.createRef();
+  const canvasRef = React.createRef<CanvasDraw>();
 
   const onDelete = () => {
     console.log(canvasRef);
@@ -109,7 +110,15 @@ export default function Card({
                   ref={nameRef}
                   size='xs'
                   placeholder='Monster name'
-                  style={{ backgroundColor: 'transparent' }}
+                  styles={() => ({
+                    input: {
+                      backgroundColor: 'transparent',
+                    },
+                    //need to target input::placeholder
+                    placeholder: {
+                      color: 'black',
+                    },
+                  })}
                 ></TextInput>
               </Grid.Col>
               <Grid.Col span={6}>by: {userName}</Grid.Col>
