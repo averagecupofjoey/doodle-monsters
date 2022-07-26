@@ -107,13 +107,18 @@ export default function Card({
             <Grid justify='space-between' align='center'>
               <Grid.Col span={6}>
                 <TextInput
+                  className='monsterName'
                   ref={nameRef}
                   size='xs'
-                  placeholder='Monster name'
+                  placeholder='Enter monster name'
                   styles={() => ({
                     input: {
                       backgroundColor: 'transparent',
+                      color: 'black',
+                      borderColor: 'black',
+                      paddingLeft: '5px',
                     },
+
                     //need to target input::placeholder
                     placeholder: {
                       color: 'black',
