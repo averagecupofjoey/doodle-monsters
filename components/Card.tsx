@@ -100,8 +100,13 @@ export default function Card({
 
     //Trim input name to prevent spaces for monster name
     setMonsterName(monsterName.trim());
-    console.log('monster name is:', monsterName.trim());
-    if (monsterName === '') {
+    // console.log(
+    //   'monster name is:',
+    //   monsterName.trim(),
+    //   'length is:',
+    //   monsterName.trim().length
+    // );
+    if (monsterName.trim().length === 0) {
       setOpened(true);
     } else {
       setNextSelected(true);
