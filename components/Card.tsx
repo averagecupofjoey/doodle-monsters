@@ -12,7 +12,7 @@ import {
 import CanvasDraw from 'react-canvas-draw';
 import React, { FC, useState, useRef } from 'react';
 import { RiDeleteBin6Fill, RiEraserLine } from 'react-icons/ri';
-import { GrFormNextLink } from 'react-icons/gr';
+import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { useElementSize } from '@mantine/hooks';
 import { FaPencilRuler, FaPencilAlt } from 'react-icons/fa';
 
@@ -57,7 +57,7 @@ export default function Card({
   const [color, updateColor] = useState('#4dabf7');
   const [erase, toggleErase] = useState(false);
   const [nextSelected, setNextSelected] = useState(false);
-  const [monsterName, setMonsterName] = useState(null);
+  const [monsterName, setMonsterName] = useState('');
 
   const [value, setValue] = useState(1);
   const [endValue, setEndValue] = useState(50);
@@ -66,6 +66,8 @@ export default function Card({
 
   const [opened, setOpened] = useState(false);
   const [deleteOpened, setDeleteOpened] = useState(false);
+
+  const [drawing, setDrawing] = useState(null);
 
   const {
     ref: imageRef,
@@ -90,11 +92,16 @@ export default function Card({
 
   const onNext = () => {
     //We use this to draw the uneditable image on the next step
-    localStorage.setItem('savedDrawing', canvasRef.current?.getSaveData());
+    // localStorage.setItem('savedDrawing', canvasRef.current?.getSaveData());
+    setDrawing(canvasRef.current?.getSaveData());
 
     //This will store the base64 image to submit to database
     console.log(canvasRef.current?.getDataURL());
-    if (monsterName === null) {
+
+    //Trim input name to prevent spaces for monster name
+    setMonsterName(monsterName.trim());
+    console.log('monster name is:', monsterName.trim());
+    if (monsterName === '') {
       setOpened(true);
     } else {
       setNextSelected(true);
@@ -107,7 +114,12 @@ export default function Card({
   };
 
   const handleChange = (e) => {
-    setMonsterName(e.target.value);
+    if (e.target.value.length === 0 && e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+    } else {
+      setMonsterName(e.target.value);
+    }
   };
 
   const descriptionRef = useRef<HTMLTextAreaElement>();
@@ -159,26 +171,26 @@ export default function Card({
           <div className='cardHeader'>
             <Grid justify='space-between' align='center'>
               <Grid.Col span={6}>
-                <TextInput
-                  className='monsterName'
-                  ref={nameRef}
-                  size='xs'
-                  onChange={handleChange}
-                  placeholder='Enter monster name'
-                  styles={() => ({
-                    input: {
-                      backgroundColor: 'transparent',
-                      color: 'black',
-                      borderColor: 'black',
-                      paddingLeft: '5px',
-                    },
-
-                    //need to target input::placeholder
-                    placeholder: {
-                      color: 'black',
-                    },
-                  })}
-                ></TextInput>
+                {!nextSelected && (
+                  <TextInput
+                    className='monsterName'
+                    ref={nameRef}
+                    size='xs'
+                    onChange={handleChange}
+                    placeholder={
+                      monsterName ? monsterName : 'Enter monster name'
+                    }
+                    styles={() => ({
+                      input: {
+                        backgroundColor: 'transparent',
+                        color: 'black',
+                        borderColor: 'black',
+                        paddingLeft: '5px',
+                      },
+                    })}
+                  ></TextInput>
+                )}
+                {nextSelected && <>{monsterName}</>}
               </Grid.Col>
               <Grid.Col span={6}>by: {userName}</Grid.Col>
             </Grid>
@@ -192,6 +204,7 @@ export default function Card({
                 canvasHeight={imageHeight}
                 brushRadius={radiusValue}
                 brushColor={erase ? WHITE : color}
+                saveData={drawing ? drawing : null}
               />
             )}
 
@@ -201,17 +214,56 @@ export default function Card({
                 hideGrid
                 canvasWidth={imageWidth}
                 canvasHeight={imageHeight}
-                saveData={localStorage.getItem('savedDrawing')}
+                // saveData={localStorage.getItem('savedDrawing')}
+                saveData={drawing}
               />
             )}
           </div>
           <div className='cardOptions'>
             <Grid sx={{ flex: '1' }} justify='center' gutter={0}>
-              <ColWrapper>
-                <RiDeleteBin6Fill onClick={onDelete} />
-                Delete
-              </ColWrapper>
+              {!nextSelected && (
+                <ColWrapper>
+                  <RiDeleteBin6Fill onClick={onDelete} />
+                  Delete
+                </ColWrapper>
+              )}
+              {nextSelected && (
+                <ColWrapper>
+                  <GrFormPreviousLink
+                    onClick={() => {
+                      setNextSelected(false);
+                    }}
+                  />
+                  Previous
+                </ColWrapper>
+              )}
               {/* <div onClick={() => toggleErase(!erase)}> */}
+
+              {!nextSelected && !erase && (
+                <ColWrapper>
+                  <RiEraserLine
+                    onClick={() => {
+                      toggleErase(true);
+                    }}
+                  />
+                  Erase
+                </ColWrapper>
+              )}
+
+              {!nextSelected && erase && (
+                <ColWrapper>
+                  <FaPencilAlt
+                    onClick={() => {
+                      toggleErase(false);
+                      // updateColor(WHITE);
+                    }}
+                  />{' '}
+                  Draw
+                </ColWrapper>
+              )}
+
+              {nextSelected && <ColWrapper></ColWrapper>}
+              {/*
               {!erase ? (
                 <ColWrapper>
                   <RiEraserLine
@@ -231,7 +283,8 @@ export default function Card({
                   />{' '}
                   Draw
                 </ColWrapper>
-              )}
+              )} */}
+
               {!nextSelected ? (
                 <ColWrapper>
                   <GrFormNextLink onClick={onNext} />
