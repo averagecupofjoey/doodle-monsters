@@ -6,6 +6,8 @@ import {
   TextInput,
   Textarea,
   Button,
+  Modal,
+  Group,
 } from '@mantine/core';
 import CanvasDraw from 'react-canvas-draw';
 import React, { FC, useState, useRef } from 'react';
@@ -55,12 +57,15 @@ export default function Card({
   const [color, updateColor] = useState('#4dabf7');
   const [erase, toggleErase] = useState(false);
   const [nextSelected, setNextSelected] = useState(false);
-  const [monsterName, updateMonsterName] = useState(null);
+  const [monsterName, setMonsterName] = useState(null);
 
   const [value, setValue] = useState(1);
   const [endValue, setEndValue] = useState(50);
 
   const [radiusValue, setRadiusValue] = useState(1);
+
+  const [opened, setOpened] = useState(false);
+  const [deleteOpened, setDeleteOpened] = useState(false);
 
   const {
     ref: imageRef,
@@ -79,7 +84,8 @@ export default function Card({
 
   const onDelete = () => {
     console.log(canvasRef);
-    canvasRef.current?.eraseAll();
+    setDeleteOpened(true);
+    // canvasRef.current?.eraseAll();
   };
 
   const onNext = () => {
@@ -88,12 +94,20 @@ export default function Card({
 
     //This will store the base64 image to submit to database
     console.log(canvasRef.current?.getDataURL());
-    setNextSelected(true);
+    if (monsterName === null) {
+      setOpened(true);
+    } else {
+      setNextSelected(true);
+    }
   };
 
   const onSave = () => {
     // This will be where we save the information to the database
     console.log(descriptionRef.current.value);
+  };
+
+  const handleChange = (e) => {
+    setMonsterName(e.target.value);
   };
 
   const descriptionRef = useRef<HTMLTextAreaElement>();
@@ -102,6 +116,45 @@ export default function Card({
   return (
     <>
       <div className='cardContainer'>
+        <Modal
+          opened={opened}
+          onClose={() => setOpened(false)}
+          transition='fade'
+          transitionDuration={600}
+          transitionTimingFunction='ease'
+        >
+          {'Please enter a monster name'}
+        </Modal>
+        <Modal
+          opened={deleteOpened}
+          onClose={() => setDeleteOpened(false)}
+          transition='fade'
+          transitionDuration={600}
+          transitionTimingFunction='ease'
+        >
+          {
+            <>
+              'Are you sure you want to delete this drawing?'
+              <Group spacing={'xl'}>
+                <Button
+                  onClick={() => {
+                    canvasRef.current?.eraseAll();
+                    setDeleteOpened(false);
+                  }}
+                >
+                  Yes
+                </Button>
+                <Button
+                  onClick={() => {
+                    setDeleteOpened(false);
+                  }}
+                >
+                  No
+                </Button>
+              </Group>
+            </>
+          }
+        </Modal>
         <div className='card'>
           <div className='cardHeader'>
             <Grid justify='space-between' align='center'>
@@ -110,6 +163,7 @@ export default function Card({
                   className='monsterName'
                   ref={nameRef}
                   size='xs'
+                  onChange={handleChange}
                   placeholder='Enter monster name'
                   styles={() => ({
                     input: {
@@ -207,24 +261,8 @@ export default function Card({
                   size='xs'
                 />
               </div>
-              {/* <Slider
-              label={(val) => MARKS.find((mark) => mark.value === val).label}
-              defaultValue={1}
-              min={1}
-              max={5}
-              step={1}
-              marks={MARKS}
-              styles={{ markLabel: { display: 'none' } }}
-            /> */}
-              {/* <Slider
-              label={(val) => MARKS.find((mark) => mark.value === val).label}
-              defaultValue={50}
-              step={25}
-              marks={MARKS}
-              styles={{ markLabel: { display: 'none' } }}
-            /> */}
+              <FaPencilRuler />
               <Container className='sliderContainer'>
-                <FaPencilRuler />
                 <Slider
                   value={value}
                   min={1}
@@ -237,8 +275,8 @@ export default function Card({
             </div>
           )}
           {nextSelected && (
-            <div className='cardBottomDesc'>
-              <Textarea ref={descriptionRef} />
+            <div className='cardBottomDesc' style={{ height: '30%' }}>
+              <Textarea ref={descriptionRef} sx={{ height: '100%' }} />
             </div>
           )}
         </div>
