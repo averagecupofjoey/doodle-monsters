@@ -15,6 +15,7 @@ import { RiDeleteBin6Fill, RiEraserLine } from 'react-icons/ri';
 import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { useElementSize } from '@mantine/hooks';
 import { FaPencilRuler, FaPencilAlt } from 'react-icons/fa';
+import axios from 'axios';
 
 const WHITE = '#ffffff';
 
@@ -129,6 +130,19 @@ export default function Card({
 
   const descriptionRef = useRef<HTMLTextAreaElement>();
   const nameRef = useRef<HTMLInputElement>();
+
+  const submitData = (value) => {
+    console.log(value);
+    let data = { content: value };
+    axios
+      .post('/api/sendpost', data)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
 
   return (
     <>
@@ -297,7 +311,7 @@ export default function Card({
                 </ColWrapper>
               ) : (
                 <ColWrapper>
-                  <Button onClick={onSave}>
+                  <Button onClick={() => submitData(monsterName)}>
                     <GrFormNextLink />
                     Save
                   </Button>
