@@ -1,7 +1,4 @@
 import conn from '../../../lib/db'
-
-
-
 export default async (req, res) => {
     try {
         console.log("req nom", req.body)
