@@ -1,15 +1,32 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
+import Link from 'next/link';
+import Layout from '../components/Layout';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/dist/client/router';
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <h1>Hello Next.js 👋</h1>
-    <p>
-      <Link href="/about">
-        <a>About</a>
-      </Link>
-    </p>
-  </Layout>
-)
+export default function IndexPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
 
-export default IndexPage
+  console.log('session', session);
+  return (
+    <Layout title='Home | Next.js + TypeScript Example'>
+      {session ? (
+        <button onClick={() => signOut()}>Log Out</button>
+      ) : (
+        <button
+          onClick={() => {
+            router.push('/api/auth/signin');
+          }}
+        >
+          Sign In
+        </button>
+      )}
+      <h1>Home page</h1>
+      <p>
+        <Link href='/about'>
+          <a>About</a>
+        </Link>
+      </p>
+    </Layout>
+  );
+}
