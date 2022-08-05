@@ -4,10 +4,10 @@ import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/dist/client/router';
 
 export default function IndexPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
-  console.log('session', session);
+  console.log('session', session, status);
   return (
     <Layout title='Home | Next.js + TypeScript Example'>
       {session ? (
