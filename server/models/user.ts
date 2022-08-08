@@ -4,7 +4,7 @@ import { DataTypes, Model } from 'sequelize';
 import { ModelDefined } from 'sequelize';
 
 interface UserAttributes {
-  // id: string;
+  id: string;
   username: string;
   password: string;
   email: string;
@@ -20,6 +20,11 @@ class User extends Model<UserAttributes, 'id'> {}
 
 User.init(
   {
+    id: {
+      type: DataTypes.STRING,
+      unique: true,
+      primaryKey: true
+    },
     username: {
       type: DataTypes.STRING,
       unique: true,

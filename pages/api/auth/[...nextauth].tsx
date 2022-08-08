@@ -34,7 +34,7 @@ export default nextAuth({
             // atom set with the user information here!########
 
             return {
-              // id: foundUser.getDataValue('id'),
+              id: foundUser.getDataValue('id'),
               username: foundUser.getDataValue('username'),
               email: foundUser.getDataValue('email'),
             };
@@ -64,7 +64,9 @@ export default nextAuth({
   // adapter: SequelizeAdapter(sequelize),
   callbacks: {
     jwt: async ({ token, user }) => {
-      console.log(user, token);
+      console.log('In JWT CALLBCK');
+      console.log('USER IS:', user);
+      console.log('TOKEN IS:', token);
       if (user) {
         //first time jwt callback is run, user object is available
         token.id = user.id;
@@ -72,7 +74,9 @@ export default nextAuth({
       return { ...token, ...user };
     },
     session: ({ session, token }) => {
-      console.log(session, token);
+      console.log('IN SESSION CALL BACK');
+      console.log('Session is:', session);
+      console.log('TOKEN IS:', token);
       if (token) {
         session.id = token.id;
       }
@@ -83,7 +87,7 @@ export default nextAuth({
   jwt: {
     secret: 'test',
   },
-  // pages: {
-  //   signIn: '/login',
-  // },
+  pages: {
+    signIn: '/login',
+  },
 });

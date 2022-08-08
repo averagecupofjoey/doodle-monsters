@@ -15,6 +15,7 @@ import {
 // import { GoogleButton, TwitterButton } from '../SocialButtons/SocialButtons';
 import { FcGoogle } from 'react-icons/fc';
 import Layout from '../components/Layout';
+import { signIn } from 'next-auth/react';
 
 export default function AuthenticationForm(props: PaperProps<'div'>) {
   const [type, toggle] = useToggle('login', ['login', 'register']);
@@ -51,7 +52,19 @@ export default function AuthenticationForm(props: PaperProps<'div'>) {
           my='lg'
         />
 
-        <form onSubmit={form.onSubmit(() => {})}>
+        <form
+          onSubmit={form.onSubmit(() => {
+            if (type === 'login') {
+              console.log('email:', form.values.email);
+              console.log('password:', form.values.password);
+              signIn('credentials', {
+                email: form.values.email,
+                password: form.values.password,
+                callbackUrl: `${window.location.origin}`,
+              });
+            }
+          })}
+        >
           <Group direction='column' grow>
             {type === 'register' && (
               <TextInput
