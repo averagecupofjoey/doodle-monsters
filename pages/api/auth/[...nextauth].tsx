@@ -79,6 +79,7 @@ export default nextAuth({
       console.log('TOKEN IS:', token);
       if (token) {
         session.id = token.id;
+        session.username = token.username;
       }
       return session;
     },

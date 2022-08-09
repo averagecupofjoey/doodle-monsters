@@ -4,6 +4,8 @@ import type { AppProps } from 'next/app';
 import { SessionProvider } from 'next-auth/react';
 import '../styles.css';
 
+// import { useRecoilValue } from 'recoil';
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider>

@@ -16,6 +16,7 @@ import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { useElementSize } from '@mantine/hooks';
 import { FaPencilRuler, FaPencilAlt } from 'react-icons/fa';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 const WHITE = '#ffffff';
 
