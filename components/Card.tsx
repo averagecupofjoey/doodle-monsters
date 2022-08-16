@@ -10,13 +10,14 @@ import {
   Group,
 } from '@mantine/core';
 import CanvasDraw from 'react-canvas-draw';
-import React, { FC, useState, useRef } from 'react';
+import React, { FC, useState, useRef, useCallback } from 'react';
 import { RiDeleteBin6Fill, RiEraserLine } from 'react-icons/ri';
 import { GrFormNextLink, GrFormPreviousLink } from 'react-icons/gr';
 import { useElementSize } from '@mantine/hooks';
 import { FaPencilRuler, FaPencilAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import _ from 'lodash';
 
 const WHITE = '#ffffff';
 
@@ -70,6 +71,8 @@ export default function Card({
   const [deleteOpened, setDeleteOpened] = useState(false);
 
   const [drawing, setDrawing] = useState(null);
+  const [monsterPNG, setMonsterPNG] = useState(null);
+  const [monsterDesc, setMonsterDesc] = useState(null);
 
   const {
     ref: imageRef,
@@ -98,7 +101,7 @@ export default function Card({
     setDrawing(canvasRef.current?.getSaveData());
 
     //This will store the base64 image to submit to database
-    console.log(canvasRef.current?.getDataURL());
+    setMonsterPNG(canvasRef.current?.getDataURL());
 
     //Trim input name to prevent spaces for monster name
     setMonsterName(monsterName.trim());
@@ -123,6 +126,10 @@ export default function Card({
     }
   };
 
+  const handleDescChange = (e) => {
+    setMonsterDesc(e.target.value);
+  };
+
   const descriptionRef = useRef<HTMLTextAreaElement>();
   const nameRef = useRef<HTMLInputElement>();
 
@@ -138,6 +145,28 @@ export default function Card({
         console.log(e);
       });
   };
+
+  const saveMonster = (monsterName, userName, img, desc, userId) => {
+    console.log('in saveMonster function');
+    console.log('monsterName', monsterName);
+    console.log('username', userName);
+    console.log('img', img);
+    console.log('desc', desc);
+    console.log('userId', userId);
+    axios
+      .post('/api/createcard', { monsterName, userName, img, desc, userId })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  // const throttleSave = useCallback(_.throttle(saveMonster))
+
+  const { data: session, status } = useSession();
+  const userId = session.id;
 
   return (
     <>
@@ -191,9 +220,7 @@ export default function Card({
                     ref={nameRef}
                     size='xs'
                     onChange={handleChange}
-                    placeholder={
-                      monsterName ? monsterName : 'Enter monster name'
-                    }
+                    placeholder={monsterName ? monsterName : 'Monster Name'}
                     styles={() => ({
                       input: {
                         backgroundColor: 'transparent',
@@ -206,7 +233,7 @@ export default function Card({
                 )}
                 {nextSelected && <>{monsterName}</>}
               </Grid.Col>
-              <Grid.Col span={6}>by: {userName}</Grid.Col>
+              <Grid.Col span={6}>by: {session.username}</Grid.Col>
             </Grid>
           </div>
           <div className='cardImage' ref={imageRef}>
@@ -277,27 +304,6 @@ export default function Card({
               )}
 
               {nextSelected && <ColWrapper></ColWrapper>}
-              {/*
-              {!erase ? (
-                <ColWrapper>
-                  <RiEraserLine
-                    onClick={() => {
-                      toggleErase(true);
-                    }}
-                  />
-                  Erase
-                </ColWrapper>
-              ) : (
-                <ColWrapper>
-                  <FaPencilAlt
-                    onClick={() => {
-                      toggleErase(false);
-                      // updateColor(WHITE);
-                    }}
-                  />{' '}
-                  Draw
-                </ColWrapper>
-              )} */}
 
               {!nextSelected ? (
                 <ColWrapper>
@@ -306,7 +312,26 @@ export default function Card({
                 </ColWrapper>
               ) : (
                 <ColWrapper>
-                  <Button onClick={() => submitData(monsterName)}>
+                  <Button
+                    onClick={() =>
+                      // _.throttle(() => {
+                      //   saveMonster(
+                      //     monsterName,
+                      //     session.username,
+                      //     monsterPNG,
+                      //     descriptionRef.current?.value,
+                      //     session.id
+                      //   );
+                      // }, 1000)
+                      saveMonster(
+                        monsterName,
+                        session.username,
+                        monsterPNG,
+                        monsterDesc,
+                        session.id
+                      )
+                    }
+                  >
                     <GrFormNextLink />
                     Save
                   </Button>
@@ -342,8 +367,27 @@ export default function Card({
             </div>
           )}
           {nextSelected && (
-            <div className='cardBottomDesc' style={{ height: '30%' }}>
-              <Textarea ref={descriptionRef} sx={{ height: '100%' }} />
+            <div
+              className='cardBottomDesc'
+              style={{ height: '30%', display: 'flex' }}
+            >
+              {/* <Textarea
+                ref={descriptionRef}
+                autosize={true}
+                minRows={6}
+                sx={{ height: '100%' }}
+              /> */}
+              <textarea
+                onChange={handleDescChange}
+                style={{
+                  flex: 1,
+                  background: 'transparent',
+                  // borderColor: 'black',
+                  padding: '5px',
+                  border: 'solid 2px black',
+                }}
+                placeholder='Enter monster description/lore here! '
+              />
             </div>
           )}
         </div>

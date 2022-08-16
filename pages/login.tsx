@@ -16,13 +16,27 @@ import {
 import { FcGoogle } from 'react-icons/fc';
 import Layout from '../components/Layout';
 import { signIn } from 'next-auth/react';
+import axios from 'axios';
+import _ from 'lodash';
+
+const registerUser = (username, email, password) => {
+  console.log('in registerUser function');
+  axios
+    .post('/api/createuser', { username, email, password })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
 
 export default function AuthenticationForm(props: PaperProps<'div'>) {
   const [type, toggle] = useToggle('login', ['login', 'register']);
   const form = useForm({
     initialValues: {
       email: '',
-      name: '',
+      username: '',
       password: '',
       terms: true,
     },
@@ -55,24 +69,41 @@ export default function AuthenticationForm(props: PaperProps<'div'>) {
         <form
           onSubmit={form.onSubmit(() => {
             if (type === 'login') {
-              console.log('email:', form.values.email);
-              console.log('password:', form.values.password);
+              // console.log('email:', form.values.email);
+              // console.log('password:', form.values.password);
               signIn('credentials', {
                 email: form.values.email,
                 password: form.values.password,
                 callbackUrl: `${window.location.origin}`,
               });
             }
+            if (type === 'register') {
+              console.log('in the register if');
+              // _.throttle(() => {
+              //   console.log('inside the throttle');
+              //   registerUser(
+              //     form.values.username,
+              //     form.values.email,
+              //     form.values.password
+              //   );
+              // }, 1000);
+              registerUser(
+                form.values.username,
+                form.values.email,
+                form.values.password
+              );
+              // _.throttle()
+            }
           })}
         >
           <Group direction='column' grow>
             {type === 'register' && (
               <TextInput
-                label='Name'
-                placeholder='Your name'
-                value={form.values.name}
+                label='Username'
+                placeholder='Desired Username'
+                value={form.values.username}
                 onChange={(event) =>
-                  form.setFieldValue('name', event.currentTarget.value)
+                  form.setFieldValue('username', event.currentTarget.value)
                 }
               />
             )}

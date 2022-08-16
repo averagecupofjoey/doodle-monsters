@@ -3,6 +3,7 @@ import CredentialProvider from 'next-auth/providers/credentials';
 import SequelizeAdapter from '@next-auth/sequelize-adapter';
 import { Sequelize } from 'sequelize';
 import User from '../../../server/models/user';
+import _ from 'lodash';
 
 const sequelize = new Sequelize(
   process.env.NEXT_PUBLIC_PGSQL_DATABASE,

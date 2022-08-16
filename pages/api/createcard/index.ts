@@ -1,14 +1,18 @@
-import conn from '../../../lib/db'
+import { dbConnection } from "../../../server/database";
+import Card from "../../../server/models/card";
+
+
+
 export default async (req, res) => {
+    // const { monsterName, userName, desc, img, userId} = req
     try {
-        console.log("req nom", req.body)
-        const query = 'INSERT INTO posts(content) VALUES($1)'
-        const values = [req.body.content]
-      const result = await conn.query(
-          query,
-          values
-      );
-      console.log( "ttt",result );
+       await Card.create({
+        monsterName: req.body.monsterName,
+        userName: req.body.userName,
+        desc: req.body.desc,
+        img: req.body.img,
+        userId: req.body.userId
+    })
   } catch ( error ) {
       console.log( error );
   }

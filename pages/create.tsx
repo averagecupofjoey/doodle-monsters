@@ -11,6 +11,8 @@ const CreatePage = () => {
   // if (!session) {
   //   return <h2>Redirect</h2>;
   // }
+  const loading = status === 'loading';
+
   useEffect(() => {
     if (!session) {
       router.push('/login');
@@ -19,6 +21,9 @@ const CreatePage = () => {
   if (!session) {
     return <Layout>Redirecting to login</Layout>;
   }
+
+  // When rendering client side don't display anything until loading is complete
+  if (typeof window !== 'undefined' && loading) return null;
   return (
     <Layout title='Profile page'>
       <Card></Card>

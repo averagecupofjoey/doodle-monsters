@@ -1,55 +1,64 @@
-import { Sequelize } from 'sequelize';
+import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import { dbConnection } from '../database';
-import { DataTypes, Model } from 'sequelize';
-import { ModelDefined } from 'sequelize';
 
 interface CardAttributes {
-  // id: string;
-  username: string;
-  password: string;
-  email: string;
+  id: string;
+  userId: string;
+  monsterName: string;
+  userName: string;
+  img: string;
+  desc: string;
 }
 
-interface UserCreationAttributes {
-  username: string;
-  password: string;
-  email: string;
-}
+// if multiple otional attributes it woud be Optional<CardAttributes, "id"|"desc"|"img"> etc.
+type CardCreationAttributes = Optional<CardAttributes, "id">
 
-class Card extends Model<CardAttributes, 'id'> {}
+
+class Card extends Model<CardAttributes, CardCreationAttributes> {}
 
 Card.init(
   {
-    username: {
+    id: {
       type: DataTypes.STRING,
       unique: true,
+      primaryKey: true,
+      defaultValue: UUIDV4()
+    },
+        userId: {
+      type: DataTypes.STRING,
+    },
+    monsterName: {
+      type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
       },
     },
-    password: {
+    userName: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: true,
       },
     },
-    email: {
+    img: {
       type: DataTypes.STRING,
-      unique: true,
       allowNull: false,
       validate: {
         notEmpty: true,
-        isEmail: {
-          msg: 'Must be a valid Email!',
-        },
+      },
+    },
+    desc: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
       },
     },
   },
   {
     sequelize: dbConnection,
-    tableName: 'users',
+    tableName: 'cards',
     timestamps: false,
   }
 );
