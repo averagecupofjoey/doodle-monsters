@@ -2,26 +2,35 @@ import Link from 'next/link';
 import Layout from '../components/Layout';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/dist/client/router';
-import axios from 'axios';
+import Card, { CardAttributes } from '../server/models/card';
 
-export default function IndexPage() {
+interface IndexPageProps {
+  cards: CardAttributes[];
+}
+
+export default function IndexPage({ cards }: IndexPageProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  cards.forEach((card) => {
+    // card.
+  });
+
   console.log('session', session, status);
 
-  const getCards = () => {
-    axios
-      .get('/api/loadcards')
-      .then((response) => {
-        console.log('we got the response!', response);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  };
+  // console.log(props);
 
-  getCards();
+  // axios
+  //   .get('/api/loadcards')
+  //   .then((response) => {
+  //     console.log('we got the response!', response.data);
+  //     const cards = response.data;
+  //     return cards;
+  //   })
+  //   .catch((e) => {
+  //     console.log(e);
+  //   });
+
   return (
     <Layout title='Home | Next.js + TypeScript Example'>
       {session ? (
@@ -43,4 +52,14 @@ export default function IndexPage() {
       </p>
     </Layout>
   );
+}
+
+export async function getServerSideProps(context) {
+  const cards = await Card.findAll({
+    raw: true,
+  });
+
+  return {
+    props: { cards }, // will be passed to the page component as props
+  };
 }

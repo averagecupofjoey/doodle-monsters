@@ -7,6 +7,7 @@ export default async (req, res) => {
     try {
        const cards = await Card.findAll()
        console.log("All cards:", JSON.stringify(cards))
+       res.send(JSON.stringify(cards))
   } catch ( error ) {
       console.log( error );
   }

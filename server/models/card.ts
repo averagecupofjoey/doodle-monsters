@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import { dbConnection } from '../database';
 
-interface CardAttributes {
+export interface CardAttributes {
   id: string;
   userId: string;
   monsterName: string;
