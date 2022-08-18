@@ -8,11 +8,18 @@ type Props = {
   username: string;
   img: string;
   desc: string;
+  monsterType: string;
 };
 
-const CompletedCard = ({ monsterName, username, img, desc }: Props) => (
+const CompletedCard = ({
+  monsterName,
+  username,
+  img,
+  desc,
+  monsterType,
+}: Props) => (
   <div className='cardContainer'>
-    <div className='card'>
+    <div className='card' style={{ backgroundColor: monsterType }}>
       <div className='cardHeader'>
         <Grid justify='space-between' align='center'>
           <Grid.Col span={6}>{monsterName}</Grid.Col>

@@ -70,6 +70,7 @@ export default function Card({
 
   const [opened, setOpened] = useState(false);
   const [deleteOpened, setDeleteOpened] = useState(false);
+  const [typeOpened, setTypeOpened] = useState(false);
 
   const [drawing, setDrawing] = useState(null);
   const [monsterPNG, setMonsterPNG] = useState(null);
@@ -109,6 +110,9 @@ export default function Card({
     setMonsterName(monsterName.trim());
     if (monsterName.trim().length === 0) {
       setOpened(true);
+    }
+    if (monsterType === null) {
+      setTypeOpened(true);
     } else {
       setNextSelected(true);
     }
@@ -148,7 +152,14 @@ export default function Card({
       });
   };
 
-  const saveMonster = (monsterName, userName, img, desc, userId) => {
+  const saveMonster = (
+    monsterName,
+    userName,
+    img,
+    desc,
+    userId,
+    monsterType
+  ) => {
     // console.log('in saveMonster function');
     // console.log('monsterName', monsterName);
     // console.log('username', userName);
@@ -156,7 +167,14 @@ export default function Card({
     // console.log('desc', desc);
     // console.log('userId', userId);
     axios
-      .post('/api/createcard', { monsterName, userName, img, desc, userId })
+      .post('/api/createcard', {
+        monsterName,
+        userName,
+        img,
+        desc,
+        userId,
+        monsterType,
+      })
       .then((response) => {
         console.log(response);
       })
@@ -182,6 +200,17 @@ export default function Card({
         >
           {'Please enter a monster name'}
         </Modal>
+
+        <Modal
+          opened={typeOpened}
+          onClose={() => setTypeOpened(false)}
+          transition='fade'
+          transitionDuration={600}
+          transitionTimingFunction='ease'
+        >
+          {'Please select a monster type'}
+        </Modal>
+
         <Modal
           opened={deleteOpened}
           onClose={() => setDeleteOpened(false)}
@@ -245,6 +274,7 @@ export default function Card({
                     { value: 'SkyBlue', label: 'Blue' },
                     { value: 'Crimson', label: 'Red' },
                     { value: 'Pink', label: 'Pink' },
+                    { value: 'Gainsboro', label: 'Gray' },
                   ]}
                   styles={() => ({
                     input: {
@@ -351,6 +381,7 @@ export default function Card({
                         session.username,
                         monsterPNG,
                         monsterDesc,
+                        monsterType,
                         session.id
                       )
                     }

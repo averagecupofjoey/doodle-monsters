@@ -11,7 +11,8 @@ export default async (req, res) => {
         userName: req.body.userName,
         desc: req.body.desc,
         img: req.body.img,
-        userId: req.body.userId
+        userId: req.body.userId,
+        monsterType: req.body.monsterType
     })
   } catch ( error ) {
       console.log( error );

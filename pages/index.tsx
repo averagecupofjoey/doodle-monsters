@@ -75,6 +75,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
               username={card.userName}
               img={card.img}
               desc={card.desc}
+              monsterType={card.monsterType}
             ></CompletedCard>
           );
         })}

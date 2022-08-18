@@ -8,6 +8,7 @@ export interface CardAttributes {
   userName: string;
   img: string;
   desc: string;
+  monsterType: string;
 }
 
 // if multiple otional attributes it woud be Optional<CardAttributes, "id"|"desc"|"img"> etc.
@@ -28,6 +29,13 @@ Card.init(
       type: DataTypes.STRING,
     },
     monsterName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notEmpty: true,
+      },
+    },
+    monsterType: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
