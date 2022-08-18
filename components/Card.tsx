@@ -8,6 +8,7 @@ import {
   Button,
   Modal,
   Group,
+  Select,
 } from '@mantine/core';
 import CanvasDraw from 'react-canvas-draw';
 import React, { FC, useState, useRef, useCallback } from 'react';
@@ -73,6 +74,7 @@ export default function Card({
   const [drawing, setDrawing] = useState(null);
   const [monsterPNG, setMonsterPNG] = useState(null);
   const [monsterDesc, setMonsterDesc] = useState(null);
+  const [monsterType, setMonsterType] = useState(null);
 
   const {
     ref: imageRef,
@@ -147,12 +149,12 @@ export default function Card({
   };
 
   const saveMonster = (monsterName, userName, img, desc, userId) => {
-    console.log('in saveMonster function');
-    console.log('monsterName', monsterName);
-    console.log('username', userName);
-    console.log('img', img);
-    console.log('desc', desc);
-    console.log('userId', userId);
+    // console.log('in saveMonster function');
+    // console.log('monsterName', monsterName);
+    // console.log('username', userName);
+    // console.log('img', img);
+    // console.log('desc', desc);
+    // console.log('userId', userId);
     axios
       .post('/api/createcard', { monsterName, userName, img, desc, userId })
       .then((response) => {
@@ -210,7 +212,7 @@ export default function Card({
             </>
           }
         </Modal>
-        <div className='card'>
+        <div className='card' style={{ backgroundColor: monsterType }}>
           <div className='cardHeader'>
             <Grid justify='space-between' align='center'>
               <Grid.Col span={6}>
@@ -233,7 +235,28 @@ export default function Card({
                 )}
                 {nextSelected && <>{monsterName}</>}
               </Grid.Col>
-              <Grid.Col span={6}>by: {session.username}</Grid.Col>
+              {/* <Grid.Col span={6}>by: {session.username}</Grid.Col> */}
+              <Grid.Col span={6}>
+                <Select
+                  placeholder='Type'
+                  value={monsterType}
+                  onChange={setMonsterType}
+                  data={[
+                    { value: 'SkyBlue', label: 'Blue' },
+                    { value: 'Crimson', label: 'Red' },
+                    { value: 'Pink', label: 'Pink' },
+                  ]}
+                  styles={() => ({
+                    input: {
+                      backgroundColor: 'transparent',
+                      color: 'black',
+                      borderColor: 'black',
+                      paddingLeft: '5px',
+                      textAlign: 'right',
+                    },
+                  })}
+                ></Select>
+              </Grid.Col>
             </Grid>
           </div>
           <div className='cardImage' ref={imageRef}>
