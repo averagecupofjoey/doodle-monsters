@@ -381,8 +381,8 @@ export default function Card({
                         session.username,
                         monsterPNG,
                         monsterDesc,
-                        monsterType,
-                        session.id
+                        session.id,
+                        monsterType
                       )
                     }
                   >
