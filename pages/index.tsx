@@ -5,6 +5,9 @@ import { useRouter } from 'next/dist/client/router';
 import Card, { CardAttributes } from '../server/models/card';
 import { SimpleGrid } from '@mantine/core';
 import CompletedCard from '../components/CompletedCard';
+import { useState } from 'react';
+import { Button, Modal, Group } from '@mantine/core';
+import { Carousel, useAnimationOffsetEffect } from '@mantine/carousel';
 
 interface IndexPageProps {
   cards: CardAttributes[];
@@ -32,6 +35,12 @@ export default function IndexPage({ cards }: IndexPageProps) {
   //   .catch((e) => {
   //     console.log(e);
   //   });
+
+  const TRANSITION_DURATION = 200;
+  const [opened, setOpened] = useState(false);
+  const [embla, setEmbla] = useState(null);
+
+  useAnimationOffsetEffect(embla, TRANSITION_DURATION);
 
   return (
     <Layout title='Home | Next.js + TypeScript Example'>
@@ -66,6 +75,37 @@ export default function IndexPage({ cards }: IndexPageProps) {
           );
         })}
       </SimpleGrid> */}
+
+      <Group position='center'>
+        <Button onClick={() => setOpened(true)}>
+          Open modal with carousel
+        </Button>
+      </Group>
+
+      <Modal
+        opened={opened}
+        size='300px'
+        padding={0}
+        transitionDuration={TRANSITION_DURATION}
+        withCloseButton={false}
+        onClose={() => setOpened(false)}
+      >
+        <Carousel loop getEmblaApi={setEmbla}>
+          {cards.map((card) => {
+            return (
+              <Carousel.Slide>
+                <CompletedCard
+                  monsterName={card.monsterName}
+                  username={card.userName}
+                  img={card.img}
+                  desc={card.desc}
+                  monsterType={card.monsterType}
+                ></CompletedCard>
+              </Carousel.Slide>
+            );
+          })}
+        </Carousel>
+      </Modal>
 
       <SimpleGrid cols={2}>
         {cards.map((card) => {
