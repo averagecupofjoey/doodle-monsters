@@ -5,9 +5,9 @@ import { useRouter } from 'next/dist/client/router';
 import Card, { CardAttributes } from '../server/models/card';
 import { SimpleGrid } from '@mantine/core';
 import CompletedCard from '../components/CompletedCard';
-import { useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Button, Modal, Group } from '@mantine/core';
-import { Carousel, useAnimationOffsetEffect } from '@mantine/carousel';
+import { Carousel, useAnimationOffsetEffect, Embla } from '@mantine/carousel';
 
 interface IndexPageProps {
   cards: CardAttributes[];
@@ -16,10 +16,6 @@ interface IndexPageProps {
 export default function IndexPage({ cards }: IndexPageProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
-
-  cards.forEach((card) => {
-    // card.
-  });
 
   console.log('session', session, status);
 
@@ -39,6 +35,11 @@ export default function IndexPage({ cards }: IndexPageProps) {
   const TRANSITION_DURATION = 200;
   const [opened, setOpened] = useState(false);
   const [embla, setEmbla] = useState(null);
+  const [cardNum, setCardNum] = useState(0);
+
+  const handleClick = useCallback(() => {
+    if (!embla) return;
+  }, [embla, setCardNum]);
 
   useAnimationOffsetEffect(embla, TRANSITION_DURATION);
 
@@ -80,6 +81,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
         <Button onClick={() => setOpened(true)}>
           Open modal with carousel
         </Button>
+        <Button onClick={() => setCardNum(2)}>Card Position 2</Button>
       </Group>
 
       <Modal
@@ -90,7 +92,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
         withCloseButton={false}
         onClose={() => setOpened(false)}
       >
-        <Carousel loop getEmblaApi={setEmbla}>
+        <Carousel loop getEmblaApi={setEmbla} initialSlide={cardNum}>
           {cards.map((card) => {
             return (
               <Carousel.Slide>
@@ -108,11 +110,15 @@ export default function IndexPage({ cards }: IndexPageProps) {
       </Modal>
 
       <SimpleGrid cols={2}>
-        {cards.map((card) => {
+        {cards.map((card, idx) => {
           return (
             <CompletedCard
+              onClick={() => {
+                setCardNum(idx);
+                setOpened(true);
+              }}
               monsterName={card.monsterName}
-              username={card.userName}
+              username={null}
               img={card.img}
               desc={card.desc}
               monsterType={card.monsterType}

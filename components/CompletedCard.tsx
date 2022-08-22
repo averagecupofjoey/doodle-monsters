@@ -9,6 +9,7 @@ type Props = {
   img: string;
   desc: string;
   monsterType: string;
+  onClick?: () => void;
 };
 
 const CompletedCard = ({
@@ -17,13 +18,15 @@ const CompletedCard = ({
   img,
   desc,
   monsterType,
+  onClick,
 }: Props) => (
-  <div className='cardContainer'>
+  <div className='cardContainer' onClick={onClick}>
     <div className='card' style={{ backgroundColor: monsterType }}>
       <div className='cardHeader'>
         <Grid justify='space-between' align='center'>
-          <Grid.Col span={6}>{monsterName}</Grid.Col>
-          <Grid.Col span={6}>by: {username}</Grid.Col>
+          {username === null && <Grid.Col span={12}>{monsterName}</Grid.Col>}
+          {username !== null && <Grid.Col span={6}>{monsterName}</Grid.Col>}
+          {username !== null && <Grid.Col span={6}>by: {username}</Grid.Col>}
         </Grid>
       </div>
       <div className='cardImage'>
