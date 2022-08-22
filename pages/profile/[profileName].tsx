@@ -14,6 +14,7 @@ interface ProfilePageProps {
 export default function ProfilePage({ cards }: ProfilePageProps) {
   const router = useRouter();
   const { profileName } = router.query;
+  console.log(cards);
   return (
     <Layout title='Profile page'>
       <Grid justify='space-between' align='center'>

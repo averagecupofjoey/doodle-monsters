@@ -6,7 +6,7 @@ import Card from "../../../server/models/card";
 export default async (req, res) => {
     // const { monsterName, userName, desc, img, userId} = req
     try {
-       await Card.create({
+       const card = await Card.create({
         monsterName: req.body.monsterName,
         userName: req.body.userName,
         desc: req.body.desc,
@@ -14,9 +14,11 @@ export default async (req, res) => {
         userId: req.body.userId,
         monsterType: req.body.monsterType
     })
+    res.status(200).json(card)
+
+
   } catch ( error ) {
       console.log( error );
   }
-
 
   };

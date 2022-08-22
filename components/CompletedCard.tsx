@@ -27,7 +27,7 @@ const CompletedCard = ({
         </Grid>
       </div>
       <div className='cardImage'>
-        <img src={img}></img>
+        <img src={img} style={{ objectFit: 'fill' }}></img>
       </div>
       <div className='cardOptions'>Bar for stuff here</div>
       <div

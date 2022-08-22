@@ -19,6 +19,7 @@ import { FaPencilRuler, FaPencilAlt } from 'react-icons/fa';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import _ from 'lodash';
+import { useRouter } from 'next/router';
 
 const WHITE = '#ffffff';
 
@@ -152,6 +153,7 @@ export default function Card({
       });
   };
 
+  const router = useRouter();
   const saveMonster = (
     monsterName,
     userName,
@@ -177,6 +179,7 @@ export default function Card({
       })
       .then((response) => {
         console.log(response);
+        router.push('/');
       })
       .catch((e) => {
         console.log(e);
@@ -376,6 +379,8 @@ export default function Card({
                       //     session.id
                       //   );
                       // }, 1000)
+
+                      //use ROOKS for throttle
                       saveMonster(
                         monsterName,
                         session.username,
