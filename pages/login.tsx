@@ -1,5 +1,6 @@
 import React from 'react';
-import { useForm, useToggle, upperFirst } from '@mantine/hooks';
+import { useToggle, upperFirst } from '@mantine/hooks';
+import { useForm } from '@mantine/form';
 import {
   TextInput,
   PasswordInput,
@@ -11,6 +12,7 @@ import {
   Divider,
   Checkbox,
   Anchor,
+  Stack,
 } from '@mantine/core';
 // import { GoogleButton, TwitterButton } from '../SocialButtons/SocialButtons';
 import { FcGoogle } from 'react-icons/fc';
@@ -31,8 +33,8 @@ const registerUser = (username, email, password) => {
     });
 };
 
-export default function AuthenticationForm(props: PaperProps<'div'>) {
-  const [type, toggle] = useToggle('login', ['login', 'register']);
+export default function AuthenticationForm(props: PaperProps) {
+  const [type, toggle] = useToggle(['login', 'register']);
   const form = useForm({
     initialValues: {
       email: '',
@@ -41,9 +43,12 @@ export default function AuthenticationForm(props: PaperProps<'div'>) {
       terms: true,
     },
 
-    validationRules: {
-      email: (val) => /^\S+@\S+$/.test(val),
-      password: (val) => val.length >= 6,
+    validate: {
+      email: (val) => (/^\S+@\S+$/.test(val) ? null : 'Invalid email'),
+      password: (val) =>
+        val.length <= 6
+          ? 'Password should include at least 6 characters'
+          : null,
     },
   });
 
@@ -96,7 +101,8 @@ export default function AuthenticationForm(props: PaperProps<'div'>) {
             }
           })}
         >
-          <Group direction='column' grow>
+          <Stack>
+            {/* <Group direction='column' grow> */}
             {type === 'register' && (
               <TextInput
                 label='Username'
@@ -142,7 +148,8 @@ export default function AuthenticationForm(props: PaperProps<'div'>) {
                 }
               />
             )}
-          </Group>
+            {/* </Group> */}
+          </Stack>
 
           <Group position='apart' mt='xl'>
             <Anchor

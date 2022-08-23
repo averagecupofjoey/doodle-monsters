@@ -37,6 +37,8 @@ const ColWrapper: FC = ({ children }) => {
   );
 };
 
+const toggleUpvote = function () {};
+
 const CompletedCard = ({
   monsterName,
   username,
@@ -74,7 +76,7 @@ const CompletedCard = ({
           <Grid gutter='xl' justify='space-between'>
             <ColWrapper>
               <Grid.Col span={3}>
-                <TiArrowUpOutline>Upvotes</TiArrowUpOutline>
+                <TiArrowUpOutline />
               </Grid.Col>
             </ColWrapper>
             <ColWrapper>
