@@ -1,27 +1,29 @@
-import React, { ReactNode } from 'react'
-import Link from 'next/link'
-import Head from 'next/head'
+import React, { ReactNode } from 'react';
+import Link from 'next/link';
+import Head from 'next/head';
 
-import { HeaderMenu } from './Header'
-import FooterMenu from './Footer'
+import { HeaderMenu } from './Header';
+import FooterMenu from './Footer';
 
 type Props = {
-  children: ReactNode | undefined
-  title?: string
-}
+  children: ReactNode | undefined;
+  title?: string;
+};
 
-{/* <Layout title="shshfdlskajfsaljk">
+{
+  /* <Layout title="shshfdlskajfsaljk">
   <div>
     <li></li>
   </div>
-</Layout> */}
+</Layout> */
+}
 
 const Layout = ({ children, title = 'This is the default title' }: Props) => (
-  <div>
+  <div className='appContainer'>
     <Head>
       <title>{title}</title>
-      <meta charSet="utf-8" />
-      <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      <meta charSet='utf-8' />
+      <meta name='viewport' content='initial-scale=1.0, width=device-width' />
     </Head>
     <HeaderMenu />
     {/* <header>
@@ -50,6 +52,6 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
     </footer> */}
     <FooterMenu />
   </div>
-)
+);
 
-export default Layout
+export default Layout;

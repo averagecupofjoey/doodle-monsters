@@ -89,3 +89,7 @@
   opacity: 1;
   /* Firefox */
 }
+
+.appContainer {
+  background-color: lightgrey;
+}
