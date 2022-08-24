@@ -12,6 +12,7 @@ import {
 } from 'react-icons/ti';
 import { FaRegComments, FaComments } from 'react-icons/fa';
 import { IoMdShareAlt } from 'react-icons/io';
+import axios from 'axios';
 
 type Props = {
   monsterName: string;
@@ -20,6 +21,8 @@ type Props = {
   desc: string;
   monsterType: string;
   onClick?: () => void;
+  creatorId: string;
+  cardId: string;
 };
 
 const ColWrapper: FC = ({ children }) => {
@@ -37,7 +40,17 @@ const ColWrapper: FC = ({ children }) => {
   );
 };
 
-const toggleUpvote = function () {};
+const toggleUpvote = function (card_id, user_id) {
+  console.log('toggling upvote');
+  axios
+    .post('/api/createupvote', { card_id, user_id })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
 
 const CompletedCard = ({
   monsterName,
@@ -46,6 +59,8 @@ const CompletedCard = ({
   desc,
   monsterType,
   onClick,
+  creatorId,
+  cardId,
 }: Props) => (
   <div className='cardContainer' onClick={onClick}>
     <div className='card' style={{ backgroundColor: monsterType }}>
@@ -76,7 +91,11 @@ const CompletedCard = ({
           <Grid gutter='xl' justify='space-between'>
             <ColWrapper>
               <Grid.Col span={3}>
-                <TiArrowUpOutline />
+                <TiArrowUpOutline
+                  onClick={() => {
+                    toggleUpvote(cardId, creatorId);
+                  }}
+                />
               </Grid.Col>
             </ColWrapper>
             <ColWrapper>

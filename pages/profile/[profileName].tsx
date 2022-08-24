@@ -40,10 +40,12 @@ export default function ProfilePage({ cards }: ProfilePageProps) {
           return (
             <CompletedCard
               monsterName={card.monsterName}
-              username={card.userName}
+              username={null}
               img={card.img}
               desc={card.desc}
               monsterType={card.monsterType}
+              creatorId={card.userId}
+              cardId={card.id}
             ></CompletedCard>
           );
         })}

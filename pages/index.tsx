@@ -102,6 +102,8 @@ export default function IndexPage({ cards }: IndexPageProps) {
                   img={card.img}
                   desc={card.desc}
                   monsterType={card.monsterType}
+                  cardId={card.id}
+                  creatorId={card.userId}
                 ></CompletedCard>
               </Carousel.Slide>
             );
@@ -122,6 +124,8 @@ export default function IndexPage({ cards }: IndexPageProps) {
               img={card.img}
               desc={card.desc}
               monsterType={card.monsterType}
+              creatorId={card.userId}
+              cardId={card.id}
             ></CompletedCard>
           );
         })}
