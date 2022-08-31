@@ -7,6 +7,7 @@ interface UpvoteAttributes {
   user_id: string;
   deleted: boolean;
   // upvotes_pkey: string;
+  CardId: string
 }
 
 // if multiple otional attributes it woud be Optional<UserAttributes, "id"|"desc"|"img"> etc.
@@ -30,6 +31,14 @@ Upvote.init(
       validate: {
         notEmpty: true,
       },
+    },
+    CardId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      references: {
+        model: "Card",
+        key: 'id',
+      }
     },
     user_id: {
       type: DataTypes.STRING,

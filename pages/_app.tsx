@@ -8,7 +8,7 @@ import '../styles.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <SessionProvider>
+    <SessionProvider session={pageProps.session}>
       <RecoilRoot>
         <ChakraProvider>
           {/* <div className='appWrapper'> */}

@@ -1,23 +1,36 @@
 import Link from 'next/link';
 import Layout from '../components/Layout';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession, signOut, getSession } from 'next-auth/react';
 import { useRouter } from 'next/dist/client/router';
 import Card, { CardAttributes } from '../server/models/card';
+
 import { SimpleGrid } from '@mantine/core';
 import CompletedCard from '../components/CompletedCard';
 import { useState, useCallback, useEffect } from 'react';
 import { Button, Modal, Group } from '@mantine/core';
 import { Carousel, useAnimationOffsetEffect, Embla } from '@mantine/carousel';
+import Upvote from '../server/models/upvote';
+import { where } from 'sequelize/types';
 
 interface IndexPageProps {
   cards: CardAttributes[];
+  sessionProps: any;
 }
 
-export default function IndexPage({ cards }: IndexPageProps) {
+export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   console.log('session', session, status);
+  console.log('*****', sessionProps);
+
+  // console.log(cards);
+  async function checkSession() {
+    const sessionProps = await getSession();
+    console.log('here we goooo', sessionProps);
+  }
+
+  // console.log(cards.filter((card) => card.id));
 
   // console.log(props);
 
@@ -104,6 +117,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
                   monsterType={card.monsterType}
                   cardId={card.id}
                   creatorId={card.userId}
+                  currentUserId={sessionProps ? sessionProps.id : 'nothing'}
                 ></CompletedCard>
               </Carousel.Slide>
             );
@@ -126,6 +140,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
               monsterType={card.monsterType}
               creatorId={card.userId}
               cardId={card.id}
+              currentUserId={sessionProps ? sessionProps.id : 'nothing'}
             ></CompletedCard>
           );
         })}
@@ -141,10 +156,33 @@ export default function IndexPage({ cards }: IndexPageProps) {
 
 export async function getServerSideProps(context) {
   const cards = await Card.findAll({
+    // include: { model: Upvote },
+    include: Upvote,
     raw: true,
   });
 
+  const sessionProps = await getSession(context);
+
+  // cards.map(async (card) => {
+  //   const upvotes = await Upvote.count;
+  // });
+  // const upvotes = await Upvote.count({
+  //   where: { card_id: '1c011ea2-613a-4af9-b22d-7c21660f2dc2' },
+  // });
+
+  // console.log('here are the upvotes', upvotes);
+
   return {
-    props: { cards }, // will be passed to the page component as props
+    props: { cards, sessionProps }, // will be passed to the page component as props
   };
+
+  // {
+  //   cards: [
+  //     {
+  //       cardId: 'dfgfd',
+  //       count: 2,
+  //     },
+  //   ];
+  // }
+  // card['Upvotes.id']
 }

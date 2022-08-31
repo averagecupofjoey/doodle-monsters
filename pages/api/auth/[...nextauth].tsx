@@ -65,19 +65,19 @@ export default nextAuth({
   // adapter: SequelizeAdapter(sequelize),
   callbacks: {
     jwt: async ({ token, user }) => {
-      console.log('In JWT CALLBCK');
-      console.log('USER IS:', user);
-      console.log('TOKEN IS:', token);
+      // console.log('In JWT CALLBCK');
+      // console.log('USER IS:', user);
+      // console.log('TOKEN IS:', token);
       if (user) {
         //first time jwt callback is run, user object is available
         token.id = user.id;
       }
       return { ...token, ...user };
     },
-    session: ({ session, token }) => {
-      console.log('IN SESSION CALL BACK');
-      console.log('Session is:', session);
-      console.log('TOKEN IS:', token);
+    session: async ({ session, token }) => {
+      // console.log('IN SESSION CALL BACK');
+      // console.log('Session is:', session);
+      // console.log('TOKEN IS:', token);
       if (token) {
         session.id = token.id;
         session.username = token.username;
@@ -85,6 +85,9 @@ export default nextAuth({
       return session;
     },
   },
+  // session: {
+  //   strategy: 'jwt',
+  // },
   secret: 'test',
   jwt: {
     secret: 'test',

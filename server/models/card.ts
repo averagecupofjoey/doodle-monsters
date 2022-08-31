@@ -1,6 +1,8 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import { dbConnection } from '../database';
 
+import Upvote from './upvote';
+
 export interface CardAttributes {
   id: string;
   userId: string;
@@ -70,5 +72,11 @@ Card.init(
     timestamps: false,
   }
 );
+
+Upvote.belongsTo(Card, {
+  foreignKey: 'card_id'
+})
+
+Card.hasMany(Upvote)
 
 export default Card;
