@@ -32,21 +32,6 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
     console.log('here we goooo', sessionProps);
   }
 
-  // console.log(cards.filter((card) => card.id));
-
-  // console.log(props);
-
-  // axios
-  //   .get('/api/loadcards')
-  //   .then((response) => {
-  //     console.log('we got the response!', response.data);
-  //     const cards = response.data;
-  //     return cards;
-  //   })
-  //   .catch((e) => {
-  //     console.log(e);
-  //   });
-
   const TRANSITION_DURATION = 200;
   const [opened, setOpened] = useState(false);
   const [embla, setEmbla] = useState(null);
@@ -71,26 +56,6 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
           Sign In
         </button>
       )}
-      <p>
-        {/* <Link href='/about'>
-          <a>About</a>
-        </Link> */}
-      </p>
-      {/* {cards &&
-        cards.forEach((card) => {
-          console.log(card.monsterName);
-          return <h1>{card.monsterName}</h1>;
-        })} */}
-
-      {/* <SimpleGrid cols={2}>
-        {cards.map((card) => {
-          return (
-            <div>
-              <img src={card.img}></img>
-            </div>
-          );
-        })}
-      </SimpleGrid> */}
 
       <Group position='center'>
         <Button onClick={() => setOpened(true)}>

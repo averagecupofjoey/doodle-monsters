@@ -13,6 +13,7 @@ import {
 import { FaRegComments, FaComments } from 'react-icons/fa';
 import { IoMdShareAlt } from 'react-icons/io';
 import axios from 'axios';
+import { useElementSize } from '@mantine/hooks';
 
 type Props = {
   monsterName: string;
@@ -79,6 +80,11 @@ const CompletedCard = ({
     currentUserId,
     'upvotes are:'
   );
+  const {
+    ref: imageRef,
+    width: imageWidth,
+    height: imageHeight,
+  } = useElementSize();
 
   // React.useEffect(() => {
   //   loadUpvotes(cardId).then((x) => {
@@ -100,8 +106,13 @@ const CompletedCard = ({
             )}
           </Grid>
         </div>
-        <div className='cardImage'>
-          <img src={img} style={{ objectFit: 'fill' }}></img>
+        <div className='cardImage' ref={imageRef}>
+          {imageWidth && imageHeight && (
+            <img
+              src={img}
+              style={{ width: imageWidth, height: imageHeight }}
+            ></img>
+          )}
         </div>
         <div className='cardOptions'>
           {username === null && (
