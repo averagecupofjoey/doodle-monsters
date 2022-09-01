@@ -17,7 +17,11 @@ export interface CardAttributes {
 type CardCreationAttributes = Optional<CardAttributes, "id">
 
 
-class Card extends Model<CardAttributes, CardCreationAttributes> {}
+class Card extends Model<CardAttributes, CardCreationAttributes> {
+  // static associate(models){
+  //   Card.hasMany(models.Upvote)
+  // }
+}
 
 Card.init(
   {
@@ -73,9 +77,11 @@ Card.init(
   }
 );
 
-Upvote.belongsTo(Card, {
-  foreignKey: 'card_id'
-})
+// Upvote.belongsTo(Card, {
+//   foreignKey: 'card_id'
+// })
+
+// Upvote.belongsTo(Card)
 
 Card.hasMany(Upvote)
 

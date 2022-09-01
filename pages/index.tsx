@@ -10,7 +10,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { Button, Modal, Group } from '@mantine/core';
 import { Carousel, useAnimationOffsetEffect, Embla } from '@mantine/carousel';
 import Upvote from '../server/models/upvote';
-import { where } from 'sequelize/types';
+// import { Sequelize, where } from 'sequelize/types';
+import { Sequelize } from 'sequelize';
 
 interface IndexPageProps {
   cards: CardAttributes[];
@@ -24,7 +25,8 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
   console.log('session', session, status);
   console.log('*****', sessionProps);
 
-  // console.log(cards);
+  console.log(cards[0]);
+
   async function checkSession() {
     const sessionProps = await getSession();
     console.log('here we goooo', sessionProps);
@@ -155,11 +157,20 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
 }
 
 export async function getServerSideProps(context) {
-  const cards = await Card.findAll({
-    // include: { model: Upvote },
-    include: Upvote,
-    raw: true,
+  let cards = await Card.findAll({
+    // attributes: {
+    //   include: [
+    //     [Sequelize.fn('COUNT', Sequelize.col('Upvote.id')), 'upvoteCount'],
+    //   ],
+    // },
+    include: [Upvote],
+    // raw: true,
   });
+
+  // const cards = cardsData.map((card) => card.get({ plain: true }));
+  // const cards = cardsData.toJSON()
+
+  cards = JSON.parse(JSON.stringify(cards));
 
   const sessionProps = await getSession(context);
 

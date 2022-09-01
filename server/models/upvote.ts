@@ -1,6 +1,8 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import { dbConnection } from '../database';
 
+import Card from './card'
+
 interface UpvoteAttributes {
   id: string;
   card_id: string;
@@ -15,7 +17,11 @@ interface UpvoteAttributes {
 
 
 // class Upvote extends Model<UpvoteAttributes, UpvoteCreationAttributes> {}
-class Upvote extends Model<UpvoteAttributes> {}
+class Upvote extends Model<UpvoteAttributes> {
+  // static associate(models){
+  //   Upvote.belongsTo(models.Card)
+  // }
+}
 
 
 Upvote.init(
@@ -58,5 +64,7 @@ Upvote.init(
     timestamps: false,
   }
 );
+
+// Upvote.belongsTo(Card)
 
 export default Upvote;

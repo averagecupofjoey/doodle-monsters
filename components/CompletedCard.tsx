@@ -72,7 +72,13 @@ const CompletedCard = ({
   cardId,
   currentUserId,
 }: Props) => {
-  console.log('CARD ID IS:', cardId, 'Current user Id is', currentUserId);
+  console.log(
+    'CARD ID IS:',
+    cardId,
+    'Current user Id is',
+    currentUserId,
+    'upvotes are:'
+  );
 
   // React.useEffect(() => {
   //   loadUpvotes(cardId).then((x) => {
