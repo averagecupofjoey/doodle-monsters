@@ -12,24 +12,24 @@ import { Carousel, useAnimationOffsetEffect, Embla } from '@mantine/carousel';
 import Upvote from '../server/models/upvote';
 // import { Sequelize, where } from 'sequelize/types';
 import { Sequelize } from 'sequelize';
+import { Literal } from 'sequelize/types/utils';
 
 interface IndexPageProps {
   cards: CardAttributes[];
-  sessionProps: any;
 }
 
-export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
+export default function IndexPage({ cards }: IndexPageProps) {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   console.log('session', session, status);
-  console.log('*****', sessionProps);
+  // console.log('*****', session);
 
   console.log(cards[0]);
 
   async function checkSession() {
-    const sessionProps = await getSession();
-    console.log('here we goooo', sessionProps);
+    const session = await getSession();
+    console.log('here we goooo', session);
   }
 
   const TRANSITION_DURATION = 200;
@@ -57,12 +57,12 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
         </button>
       )}
 
-      <Group position='center'>
+      {/* <Group position='center'>
         <Button onClick={() => setOpened(true)}>
           Open modal with carousel
         </Button>
         <Button onClick={() => setCardNum(2)}>Card Position 2</Button>
-      </Group>
+      </Group> */}
 
       <Modal
         opened={opened}
@@ -84,7 +84,7 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
                   monsterType={card.monsterType}
                   cardId={card.id}
                   creatorId={card.userId}
-                  currentUserId={sessionProps ? sessionProps.id : 'nothing'}
+                  currentUserId={session ? session.id : 'nothing'}
                 ></CompletedCard>
               </Carousel.Slide>
             );
@@ -107,7 +107,7 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
               monsterType={card.monsterType}
               creatorId={card.userId}
               cardId={card.id}
-              currentUserId={sessionProps ? sessionProps.id : 'nothing'}
+              currentUserId={session ? session.id : 'nothing'}
             ></CompletedCard>
           );
         })}
@@ -122,12 +122,35 @@ export default function IndexPage({ cards, sessionProps }: IndexPageProps) {
 }
 
 export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
   let cards = await Card.findAll({
-    // attributes: {
-    //   include: [
-    //     [Sequelize.fn('COUNT', Sequelize.col('Upvote.id')), 'upvoteCount'],
-    //   ],
-    // },
+    attributes: {
+      include: [
+        [
+          Sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM upvotes
+                    WHERE
+                        upvotes."CardId"= "Card".id
+                )`),
+          'upvoteCount',
+        ],
+        ...(session
+          ? [
+              [
+                Sequelize.literal(`(
+                    SELECT COUNT(*)
+                    FROM upvotes
+                    WHERE
+                        upvotes."CardId"= "Card".id
+                )`),
+                'userU',
+              ] as [Literal, string],
+            ]
+          : null),
+      ],
+    },
     include: [Upvote],
     // raw: true,
   });
@@ -136,8 +159,6 @@ export async function getServerSideProps(context) {
   // const cards = cardsData.toJSON()
 
   cards = JSON.parse(JSON.stringify(cards));
-
-  const sessionProps = await getSession(context);
 
   // cards.map(async (card) => {
   //   const upvotes = await Upvote.count;
@@ -149,7 +170,7 @@ export async function getServerSideProps(context) {
   // console.log('here are the upvotes', upvotes);
 
   return {
-    props: { cards, sessionProps }, // will be passed to the page component as props
+    props: { cards, session }, // will be passed to the page component as props
   };
 
   // {

@@ -42,14 +42,6 @@ const ColWrapper: FC = ({ children }) => {
   );
 };
 
-// const loadUpvotes = async function (card_Id) {
-//   const total = await axios.get(`/api/loadupvotes/`, {
-//     params: { card_Id: card_Id },
-//   });
-
-//   return total;
-// };
-
 const toggleUpvote = function (card_id, user_id) {
   console.log('toggling upvote');
   axios

@@ -1,7 +1,7 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import { dbConnection } from '../database';
 
-import Card from './card'
+import {Card} from './card'
 
 interface UpvoteAttributes {
   id: string;
