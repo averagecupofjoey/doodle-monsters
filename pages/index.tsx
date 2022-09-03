@@ -10,12 +10,17 @@ import { useState, useCallback, useEffect } from 'react';
 import { Button, Modal, Group } from '@mantine/core';
 import { Carousel, useAnimationOffsetEffect, Embla } from '@mantine/carousel';
 import Upvote from '../server/models/upvote';
-// import { Sequelize, where } from 'sequelize/types';
 import { Sequelize } from 'sequelize';
 import { Literal } from 'sequelize/types/utils';
 
+interface UpvoteProps {
+  upvoteCount: number;
+  userUpvote: number;
+  Upvotes: Upvote[];
+}
+
 interface IndexPageProps {
-  cards: CardAttributes[];
+  cards: (CardAttributes & UpvoteProps)[];
 }
 
 export default function IndexPage({ cards }: IndexPageProps) {
@@ -23,9 +28,8 @@ export default function IndexPage({ cards }: IndexPageProps) {
   const router = useRouter();
 
   console.log('session', session, status);
-  // console.log('*****', session);
 
-  console.log(cards[0]);
+  console.log(cards[2]);
 
   async function checkSession() {
     const session = await getSession();
@@ -85,6 +89,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
                   cardId={card.id}
                   creatorId={card.userId}
                   currentUserId={session ? session.id : 'nothing'}
+                  upvoteCount={card.upvoteCount}
                 ></CompletedCard>
               </Carousel.Slide>
             );
@@ -107,16 +112,12 @@ export default function IndexPage({ cards }: IndexPageProps) {
               monsterType={card.monsterType}
               creatorId={card.userId}
               cardId={card.id}
+              upvoteCount={card.upvoteCount}
               currentUserId={session ? session.id : 'nothing'}
             ></CompletedCard>
           );
         })}
       </SimpleGrid>
-      {/* {for(let i = 0; i<cards.length; i++){}} */}
-      {console.log(cards.length)}
-      {/* {for(let i=0; i<cards.length; i++){
-
-      }} */}
     </Layout>
   );
 }
@@ -129,7 +130,7 @@ export async function getServerSideProps(context) {
       include: [
         [
           Sequelize.literal(`(
-                    SELECT COUNT(*)
+                    SELECT COUNT(*)::int
                     FROM upvotes
                     WHERE
                         upvotes."CardId"= "Card".id
@@ -140,34 +141,26 @@ export async function getServerSideProps(context) {
           ? [
               [
                 Sequelize.literal(`(
-                    SELECT COUNT(*)
+                    SELECT COUNT(*)::int
                     FROM upvotes
                     WHERE
                         upvotes."CardId"= "Card".id
+                    AND
+                        upvotes."user_id"= '${session.id}'
+                    AND
+                        upvotes."deleted" = false
+
                 )`),
-                'userU',
+                'userUpvote',
               ] as [Literal, string],
             ]
           : null),
       ],
     },
     include: [Upvote],
-    // raw: true,
   });
 
-  // const cards = cardsData.map((card) => card.get({ plain: true }));
-  // const cards = cardsData.toJSON()
-
   cards = JSON.parse(JSON.stringify(cards));
-
-  // cards.map(async (card) => {
-  //   const upvotes = await Upvote.count;
-  // });
-  // const upvotes = await Upvote.count({
-  //   where: { card_id: '1c011ea2-613a-4af9-b22d-7c21660f2dc2' },
-  // });
-
-  // console.log('here are the upvotes', upvotes);
 
   return {
     props: { cards, session }, // will be passed to the page component as props

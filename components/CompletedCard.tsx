@@ -25,6 +25,7 @@ type Props = {
   creatorId: string;
   cardId: string;
   currentUserId?: string;
+  upvoteCount: number;
 };
 
 const ColWrapper: FC = ({ children }) => {
@@ -64,6 +65,7 @@ const CompletedCard = ({
   creatorId,
   cardId,
   currentUserId,
+  upvoteCount,
 }: Props) => {
   console.log(
     'CARD ID IS:',
@@ -124,7 +126,8 @@ const CompletedCard = ({
                       console.log('THE CURRENT USER ID IS', currentUserId);
                       toggleUpvote(cardId, currentUserId);
                     }}
-                  />
+                  />{' '}
+                  {upvoteCount}
                 </Grid.Col>
               </ColWrapper>
               <ColWrapper>
