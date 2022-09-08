@@ -13,9 +13,13 @@ import Upvote from '../server/models/upvote';
 import { Sequelize } from 'sequelize';
 import { Literal } from 'sequelize/types/utils';
 
+import { useRecoilState } from 'recoil';
+import { cardDataState, homeCardState } from '../components/states';
+
 interface UpvoteProps {
   upvoteCount: number;
-  userUpvote: number;
+  userUpvoteCount?: number;
+  upvoteDeleted: boolean | null;
   Upvotes: Upvote[];
 }
 
@@ -24,12 +28,20 @@ interface IndexPageProps {
 }
 
 export default function IndexPage({ cards }: IndexPageProps) {
+  const [homeCards, setHomeCards] = useRecoilState(cardDataState);
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  useEffect(() => {
+    setHomeCards(cards);
+  }, [cards]);
+
+  console.log('*&^#^', homeCards);
+  console.log('test');
+
   console.log('session', session, status);
 
-  console.log(cards[2]);
+  // console.log(cards[2]);
 
   async function checkSession() {
     const session = await getSession();
@@ -77,7 +89,7 @@ export default function IndexPage({ cards }: IndexPageProps) {
         onClose={() => setOpened(false)}
       >
         <Carousel loop getEmblaApi={setEmbla} initialSlide={cardNum}>
-          {cards.map((card) => {
+          {homeCards.map((card, idx) => {
             return (
               <Carousel.Slide>
                 <CompletedCard
@@ -90,6 +102,8 @@ export default function IndexPage({ cards }: IndexPageProps) {
                   creatorId={card.userId}
                   currentUserId={session ? session.id : 'nothing'}
                   upvoteCount={card.upvoteCount}
+                  userUpvoteCount={card.userUpvoteCount}
+                  cardIdx={idx}
                 ></CompletedCard>
               </Carousel.Slide>
             );
@@ -98,9 +112,11 @@ export default function IndexPage({ cards }: IndexPageProps) {
       </Modal>
 
       <SimpleGrid cols={2}>
-        {cards.map((card, idx) => {
+        {homeCards.map((card, idx) => {
+          console.log(idx, card);
           return (
             <CompletedCard
+              key={idx}
               onClick={() => {
                 setCardNum(idx);
                 setOpened(true);
@@ -113,7 +129,9 @@ export default function IndexPage({ cards }: IndexPageProps) {
               creatorId={card.userId}
               cardId={card.id}
               upvoteCount={card.upvoteCount}
+              userUpvoteCount={card.userUpvoteCount}
               currentUserId={session ? session.id : 'nothing'}
+              cardIdx={idx}
             ></CompletedCard>
           );
         })}
@@ -134,24 +152,40 @@ export async function getServerSideProps(context) {
                     FROM upvotes
                     WHERE
                         upvotes."CardId"= "Card".id
+                    AND
+                        upvotes."deleted"= false
                 )`),
           'upvoteCount',
         ],
         ...(session
           ? [
+              // [
+              //   Sequelize.literal(`(
+              //         SELECT COUNT(*)::int
+              //         FROM upvotes
+              //         WHERE
+              //             upvotes."CardId"= "Card".id
+              //         AND
+              //             upvotes."user_id"= '${session.id}'
+              //         AND
+              //             upvotes."deleted" = false
+
+              //     )`),
+              //   'userUpvote',
+              // ] as [Literal, string],
               [
                 Sequelize.literal(`(
-                    SELECT COUNT(*)::int
-                    FROM upvotes
-                    WHERE
-                        upvotes."CardId"= "Card".id
-                    AND
-                        upvotes."user_id"= '${session.id}'
-                    AND
-                        upvotes."deleted" = false
+                      SELECT count(*)::int
+                      FROM upvotes
+                      WHERE
+                          upvotes."CardId"= "Card".id
+                      AND
+                          upvotes."user_id"= '${session.id}'
+                      AND
+                          upvotes."deleted" = false
 
-                )`),
-                'userUpvote',
+                  )`),
+                'userUpvoteCount',
               ] as [Literal, string],
             ]
           : null),

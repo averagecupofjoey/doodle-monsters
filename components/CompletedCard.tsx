@@ -14,6 +14,11 @@ import { FaRegComments, FaComments } from 'react-icons/fa';
 import { IoMdShareAlt } from 'react-icons/io';
 import axios from 'axios';
 import { useElementSize } from '@mantine/hooks';
+import { useState } from 'react';
+
+import { useRecoilState } from 'recoil';
+// import { homeCardState } from './states';
+import { cardDataState } from './states';
 
 type Props = {
   monsterName: string;
@@ -26,6 +31,8 @@ type Props = {
   cardId: string;
   currentUserId?: string;
   upvoteCount: number;
+  userUpvoteCount: number;
+  cardIdx: number;
 };
 
 const ColWrapper: FC = ({ children }) => {
@@ -43,10 +50,22 @@ const ColWrapper: FC = ({ children }) => {
   );
 };
 
-const toggleUpvote = function (card_id, user_id) {
-  console.log('toggling upvote');
+const createUpvote = function (card_id, user_id) {
+  console.log('creating upvote');
   axios
     .post('/api/createupvote', { card_id, user_id })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+
+const toggleUpvote = function (card_id, user_id, userDeleted) {
+  console.log('toggling upvote');
+  axios
+    .put('/api/toggleupvote', { card_id, user_id, userDeleted })
     .then((response) => {
       console.log(response);
     })
@@ -66,6 +85,8 @@ const CompletedCard = ({
   cardId,
   currentUserId,
   upvoteCount,
+  userUpvoteCount,
+  cardIdx,
 }: Props) => {
   console.log(
     'CARD ID IS:',
@@ -74,11 +95,25 @@ const CompletedCard = ({
     currentUserId,
     'upvotes are:'
   );
+
+  const [homeCards, setHomeCards] = useRecoilState(cardDataState);
+  // const index = homeCards.findIndex((cardItem) => cardItem === cardId);
+  // console.log('INDEX IS', index);
+
+  // console.log('IN HOME CARDS ON COMPLETED CARD', homeCards);
+
+  const [totalUpvotes, setTotalUpvotes] = useState(upvoteCount);
+
+  console.log(cardIdx, userUpvoteCount);
   const {
     ref: imageRef,
     width: imageWidth,
     height: imageHeight,
   } = useElementSize();
+
+  // let homeCardsCopy = [...homeCards];
+
+  // console.log('**** HOME CARDS COPY', homeCardsCopy);
 
   // React.useEffect(() => {
   //   loadUpvotes(cardId).then((x) => {
@@ -112,7 +147,8 @@ const CompletedCard = ({
           {username === null && (
             <Grid justify='space-between' align='left'>
               <Grid.Col span={6}>
-                <TiArrowUpOutline></TiArrowUpOutline>
+                {userUpvoteCount ? <TiArrowUpThick /> : <TiArrowUpOutline />}{' '}
+                {upvoteCount}
               </Grid.Col>
               <Grid.Col span={6}></Grid.Col>
             </Grid>
@@ -121,12 +157,57 @@ const CompletedCard = ({
             <Grid gutter='xl' justify='space-between'>
               <ColWrapper>
                 <Grid.Col span={3}>
-                  <TiArrowUpOutline
-                    onClick={() => {
-                      console.log('THE CURRENT USER ID IS', currentUserId);
-                      toggleUpvote(cardId, currentUserId);
-                    }}
-                  />{' '}
+                  {userUpvoteCount == null && <TiArrowUpOutline />}
+                  {userUpvoteCount === 0 && (
+                    <TiArrowUpOutline
+                      onClick={() => {
+                        console.log('THE CURRENT USER ID IS', currentUserId);
+                        toggleUpvote(
+                          cardId,
+                          currentUserId,
+                          homeCards[cardIdx].upvoteDeleted
+                        );
+                        // setUpvoteDeletedStatus(!upvoteDeletedStatus);
+                        // setTotalUpvotes(totalUpvotes + 1);
+                        setHomeCards((x) => {
+                          const homeCardsCopy = [...x];
+                          homeCardsCopy[cardIdx] = {
+                            ...homeCardsCopy[cardIdx],
+                          };
+                          homeCardsCopy[cardIdx].upvoteDeleted = false;
+                          homeCardsCopy[cardIdx].upvoteCount++;
+                          homeCardsCopy[cardIdx].userUpvoteCount++;
+                          return homeCardsCopy;
+                        });
+                      }}
+                    />
+                  )}
+                  {userUpvoteCount === 1 && (
+                    <TiArrowUpThick
+                      onClick={() => {
+                        console.log('THE CURRENT USER ID IS', currentUserId);
+                        toggleUpvote(
+                          cardId,
+                          currentUserId,
+                          homeCards[cardIdx].upvoteDeleted
+                        );
+                        // setUpvoteDeletedStatus(!upvoteDeletedStatus);
+                        // setTotalUpvotes(totalUpvotes - 1);
+                        setHomeCards((x) => {
+                          // const upvoteStatus = [...x[cardIdx].upvoteDeleted];
+                          // upvoteStatus[cardIdx] = true;
+                          const homeCardsCopy = [...x];
+                          homeCardsCopy[cardIdx] = {
+                            ...homeCardsCopy[cardIdx],
+                          };
+                          homeCardsCopy[cardIdx].upvoteDeleted = true;
+                          homeCardsCopy[cardIdx].upvoteCount--;
+                          homeCardsCopy[cardIdx].userUpvoteCount--;
+                          return homeCardsCopy;
+                        });
+                      }}
+                    />
+                  )}{' '}
                   {upvoteCount}
                 </Grid.Col>
               </ColWrapper>
