@@ -41,13 +41,6 @@ export default function IndexPage({ cards }: IndexPageProps) {
 
   console.log('session', session, status);
 
-  // console.log(cards[2]);
-
-  async function checkSession() {
-    const session = await getSession();
-    console.log('here we goooo', session);
-  }
-
   const TRANSITION_DURATION = 200;
   const [opened, setOpened] = useState(false);
   const [embla, setEmbla] = useState(null);

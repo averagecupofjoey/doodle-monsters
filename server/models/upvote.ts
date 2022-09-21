@@ -3,7 +3,7 @@ import { dbConnection } from '../database';
 
 import {Card} from './card'
 
-interface UpvoteAttributes {
+export interface UpvoteAttributes {
   id: string;
   card_id: string;
   user_id: string;
@@ -21,6 +21,11 @@ class Upvote extends Model<UpvoteAttributes> {
   // static associate(models){
   //   Upvote.belongsTo(models.Card)
   // }
+  declare deleted: boolean;
+  declare id: string;
+  declare card_id: string;
+  declare user_id: string;
+  declare CardId: string;
 }
 
 
