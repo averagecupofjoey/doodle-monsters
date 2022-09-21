@@ -11,6 +11,8 @@ import { Sequelize } from 'sequelize';
 import { Literal } from 'sequelize/types/utils';
 import CardGrid from '../../components/CardGrid';
 
+import { useState, useCallback, useEffect } from 'react';
+
 interface UpvoteProps {
   upvoteCount: number;
   userUpvoteCount?: number;
@@ -24,7 +26,7 @@ interface ProfilePageProps {
 export default function ProfilePage({ cards }: ProfilePageProps) {
   const router = useRouter();
   const { profileName } = router.query;
-  // console.log(cards);
+
   return (
     <Layout title='Profile page'>
       <Grid justify='space-between' align='center'>
@@ -45,24 +47,6 @@ export default function ProfilePage({ cards }: ProfilePageProps) {
         </Grid.Col>
       </Grid>
       <h1>This is {profileName} </h1>
-      {/* <SimpleGrid cols={2}>
-        {cards.map((card, idx) => {
-          return (
-            <CompletedCard
-              monsterName={card.monsterName}
-              username={null}
-              img={card.img}
-              desc={card.desc}
-              monsterType={card.monsterType}
-              creatorId={card.userId}
-              cardId={card.id}
-              upvoteCount={card.upvoteCount}
-              userUpvoteCount={card.userUpvoteCount}
-              cardIdx={idx}
-            ></CompletedCard>
-          );
-        })}
-      </SimpleGrid> */}
       <CardGrid cardList={cards} />
     </Layout>
   );
@@ -90,20 +74,6 @@ export async function getServerSideProps(context) {
         ],
         ...(session
           ? [
-              // [
-              //   Sequelize.literal(`(
-              //         SELECT COUNT(*)::int
-              //         FROM upvotes
-              //         WHERE
-              //             upvotes."CardId"= "Card".id
-              //         AND
-              //             upvotes."user_id"= '${session.id}'
-              //         AND
-              //             upvotes."deleted" = false
-
-              //     )`),
-              //   'userUpvote',
-              // ] as [Literal, string],
               [
                 Sequelize.literal(`(
                       SELECT count(*)::int

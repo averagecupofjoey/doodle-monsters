@@ -2,7 +2,6 @@ import Upvote from '../../../server/models/upvote';
 
 export default async (req, res) => {
 
-  console.log("In toggle upvote, req is :", req.body)
   try {
     const id = req.body.user_id.concat(req.body.card_id);
     // check if there is already a record

@@ -4,11 +4,20 @@ import { useSession, signOut, getSession } from 'next-auth/react';
 import { useState, useCallback, useEffect } from 'react';
 import CompletedCard from './CompletedCard';
 
+import { useRecoilState } from 'recoil';
+import { cardDataState } from './states';
+
 export default function CardGrid(props) {
   const { data: session, status } = useSession();
   const [opened, setOpened] = useState(false);
   const [embla, setEmbla] = useState(null);
   const [cardNum, setCardNum] = useState(0);
+  const [cardList, setCardList] = useRecoilState(cardDataState);
+
+  useEffect(() => {
+    setCardList(props.cardList);
+  }, [props.cardList]);
+
   const TRANSITION_DURATION = 200;
   useAnimationOffsetEffect(embla, TRANSITION_DURATION);
   return (
@@ -22,7 +31,7 @@ export default function CardGrid(props) {
         onClose={() => setOpened(false)}
       >
         <Carousel loop getEmblaApi={setEmbla} initialSlide={cardNum}>
-          {props.cardList.map((card, idx) => {
+          {cardList.map((card, idx) => {
             return (
               <Carousel.Slide>
                 <CompletedCard
@@ -45,7 +54,7 @@ export default function CardGrid(props) {
       </Modal>
 
       <SimpleGrid cols={2}>
-        {props.cardList.map((card, idx) => {
+        {cardList.map((card, idx) => {
           console.log(idx, card);
           return (
             <CompletedCard
