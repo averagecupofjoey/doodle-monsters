@@ -28,6 +28,8 @@ type Props = {
   currentUserId?: string;
   upvoteCount: number;
   userUpvoteCount: number;
+  collectedCount: number;
+  userCollectedCount: number;
   cardIdx: number;
 };
 
@@ -97,6 +99,57 @@ const useToggleUpvote = (
   };
 };
 
+const toggleCollect = function (card_id, user_id) {
+  console.log('toggling collect');
+  axios
+    .put('/api/togglecollect', { card_id, user_id })
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+};
+
+const useToggleCollect = (
+  cardId: string,
+  cardIdx: number,
+  currentUserId?: string
+) => {
+  const { cards, setCards } = useCardsList();
+
+  const collect = useCallback(() => {
+    toggleCollect(cardId, currentUserId);
+    setCards((x) => {
+      const cardsCopy = [...x];
+      cardsCopy[cardIdx] = {
+        ...cardsCopy[cardIdx],
+      };
+      cardsCopy[cardIdx].collectedCount++;
+      cardsCopy[cardIdx].userCollectedCount++;
+      return cardsCopy;
+    });
+  }, [cardId, cardIdx, currentUserId, cards]);
+
+  const undoCollect = useCallback(() => {
+    toggleCollect(cardId, currentUserId);
+    setCards((x) => {
+      const cardsCopy = [...x];
+      cardsCopy[cardIdx] = {
+        ...cardsCopy[cardIdx],
+      };
+      cardsCopy[cardIdx].collectedCount--;
+      cardsCopy[cardIdx].userCollectedCount--;
+      return cardsCopy;
+    });
+  }, [cardId, cardIdx, currentUserId, cards]);
+
+  return {
+    collect,
+    undoCollect,
+  };
+};
+
 // const useToggleUpvote = (
 //   cardId: string,
 //   cardIdx: number,
@@ -148,10 +201,18 @@ const CompletedCard = ({
   currentUserId,
   upvoteCount,
   userUpvoteCount,
+  collectedCount,
+  userCollectedCount,
   cardIdx,
 }: Props) => {
   // const [totalUpvotes, setTotalUpvotes] = useState(upvoteCount);
   const { upvote, undoUpvote } = useToggleUpvote(
+    cardId,
+    cardIdx,
+    currentUserId
+  );
+
+  const { collect, undoCollect } = useToggleCollect(
     cardId,
     cardIdx,
     currentUserId
@@ -211,7 +272,22 @@ const CompletedCard = ({
               </ColWrapper>
               <ColWrapper>
                 <Grid.Col span={3}>
-                  <TiPlusOutline />
+                  {userCollectedCount == null && <TiPlusOutline />}
+                  {/* {currentUserId === creatorId ? (
+                    <TiPlus />
+                  ) : userCollectedCount === 0 ? (
+                    <TiPlusOutline onClick={collect} />
+                  ) :
+                    userCollectedCount === 1 && (<TiPlus onClick={undoCollect}
+                  )} */}
+                  {currentUserId === creatorId && <TiPlus />}
+                  {currentUserId !== creatorId && userCollectedCount === 0 && (
+                    <TiPlusOutline onClick={collect} />
+                  )}
+                  {currentUserId !== creatorId && userCollectedCount === 1 && (
+                    <TiPlus onClick={undoCollect} />
+                  )}
+                  {collectedCount}
                 </Grid.Col>
               </ColWrapper>
               <ColWrapper>

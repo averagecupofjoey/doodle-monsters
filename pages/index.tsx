@@ -61,6 +61,17 @@ export async function getServerSideProps(context) {
                 )`),
           'upvoteCount',
         ],
+        [
+          Sequelize.literal(`(
+                    SELECT COUNT(*)::int
+                    FROM collected
+                    WHERE
+                        collected."CardId"= "Card".id
+                    AND
+                        collected."deleted"= false
+                )`),
+          'collectedCount',
+        ],
         ...(session
           ? [
               [
@@ -79,12 +90,32 @@ export async function getServerSideProps(context) {
               ] as [Literal, string],
             ]
           : null),
+        ...(session
+          ? [
+              [
+                Sequelize.literal(`(
+                      SELECT count(*)::int
+                      FROM collected
+                      WHERE
+                          collected."CardId"= "Card".id
+                      AND
+                          collected."user_id"= '${session.id}'
+                      AND
+                          collected."deleted" = false
+
+                  )`),
+                'userCollectedCount',
+              ] as [Literal, string],
+            ]
+          : null),
       ],
     },
     include: [Upvote],
   });
 
   cards = JSON.parse(JSON.stringify(cards));
+
+  console.log(cards);
 
   return {
     props: { cards, session }, // will be passed to the page component as props

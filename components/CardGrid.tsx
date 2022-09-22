@@ -46,6 +46,8 @@ export default function CardGrid(props) {
                   upvoteCount={card.upvoteCount}
                   userUpvoteCount={card.userUpvoteCount}
                   cardIdx={idx}
+                  collectedCount={card.collectedCount}
+                  userCollectedCount={card.userCollectedCount}
                 ></CompletedCard>
               </Carousel.Slide>
             );
@@ -73,6 +75,8 @@ export default function CardGrid(props) {
               upvoteCount={card.upvoteCount}
               userUpvoteCount={card.userUpvoteCount}
               currentUserId={session ? session.id : 'nothing'}
+              collectedCount={card.collectedCount}
+              userCollectedCount={card.userCollectedCount}
               cardIdx={idx}
             ></CompletedCard>
           );
