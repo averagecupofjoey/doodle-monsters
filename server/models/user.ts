@@ -12,7 +12,12 @@ interface UserAttributes {
 type UserCreationAttributes = Optional<UserAttributes, "id">
 
 
-class User extends Model<UserAttributes, UserCreationAttributes> {}
+class User extends Model<UserAttributes, UserCreationAttributes> {
+  declare id: string;
+  declare username: string;
+  declare email: string;
+  declare password: string;
+}
 
 User.init(
   {
