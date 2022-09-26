@@ -3,7 +3,7 @@ import Layout from '../../components/Layout';
 import { Grid, Button } from '@mantine/core';
 import { useRouter } from 'next/router';
 import Card, { CardAttributes } from '../../server/models/card';
-import Following from '../../server/models/following';
+import Following, { FollowingAttributes } from '../../server/models/following';
 import User from '../../server/models/user';
 import { SimpleGrid } from '@mantine/core';
 import CompletedCard from '../../components/CompletedCard';
@@ -21,27 +21,40 @@ interface UpvoteProps {
   // upvoteDeleted: boolean | null;
   // Upvotes: Upvote[];
 }
+
 interface ProfilePageProps {
   cards: (CardAttributes & UpvoteProps)[];
   collectedCards: (CardAttributes & UpvoteProps)[];
+  followingInfo: FollowingAttributes[];
+  followedInfo: FollowingAttributes[];
 }
 
 export default function ProfilePage({
   cards,
   collectedCards,
+  followingInfo,
+  followedInfo,
 }: ProfilePageProps) {
   const [profileView, setProfileView] = useState('created');
   const router = useRouter();
   const { profileName } = router.query;
 
-  console.log('######', collectedCards);
+  console.log('######', followedInfo);
 
   return (
     <Layout title='Profile page'>
       <Grid justify='space-between' align='center'>
         <Grid.Col span={4}>Profile Image</Grid.Col>
-        <Grid.Col span={4}>Followers</Grid.Col>
-        <Grid.Col span={4}>Following</Grid.Col>
+        <Grid.Col span={4}>
+          <Button compact onClick={() => setProfileView('followers')}>
+            {followedInfo.length} Followers
+          </Button>
+        </Grid.Col>
+        <Grid.Col span={4}>
+          <Button compact onClick={() => setProfileView('following')}>
+            {followingInfo.length} Following
+          </Button>
+        </Grid.Col>
       </Grid>
       <Grid grow justify='space-between' align='center'>
         <Grid.Col span={6}>
@@ -67,6 +80,8 @@ export default function ProfilePage({
       <h1>This is {profileName} </h1>
       {profileView === 'created' && <CardGrid cardList={cards} />}
       {profileView === 'collected' && <CardGrid cardList={collectedCards} />}
+      {profileView === 'following' && <h1>Following Grid will go here</h1>}
+      {profileView === 'followers' && <h1>Followed Grid will go here</h1>}
     </Layout>
   );
 }
@@ -162,11 +177,44 @@ export async function getServerSideProps(context) {
 
   user = JSON.parse(JSON.stringify(user));
 
-  let followingInfo = Following.findAll({
+  let followedInfo = await Following.findAll({
     where: {
-      following_id: user.id,
+      followed_id: user.id,
       unfollowed: false,
     },
+    // attributes: {
+    //   include: [
+    //     [
+    //       Sequelize.literal(`(
+    //         SELECT count(*)::int
+    //         FROM following
+    //         WHERE following."followed_id" = '${user.id}'
+    //         AND following."unfollowed" = false
+    //       )`),
+    //       'profileFollowerCount',
+    //     ],
+    //   ],
+    // },
+  });
+
+  let followingInfo = await Following.findAll({
+    where: {
+      follower_id: user.id,
+      unfollowed: false,
+    },
+    // attributes: {
+    //   include: [
+    //     [
+    //       Sequelize.literal(`(
+    //         SELECT count(*)::int
+    //         FROM following
+    //         WHERE following."follower_id" = '${user.id}'
+    //         AND following."unfollowed" = false
+    //       )`),
+    //       'profileFollowingCount',
+    //     ],
+    //   ],
+    // },
   });
 
   let collectedCards = await dbConnection.query<Card>(
@@ -178,8 +226,10 @@ export async function getServerSideProps(context) {
 
   cards = JSON.parse(JSON.stringify(cards));
   collectedCards = JSON.parse(JSON.stringify(collectedCards));
+  followingInfo = JSON.parse(JSON.stringify(followingInfo));
+  followedInfo = JSON.parse(JSON.stringify(followedInfo));
 
   return {
-    props: { cards, profileName, collectedCards }, // will be passed to the page component as props
+    props: { cards, profileName, collectedCards, followingInfo, followedInfo }, // will be passed to the page component as props
   };
 }

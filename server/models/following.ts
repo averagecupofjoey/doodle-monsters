@@ -1,10 +1,10 @@
 import { DataTypes, Model, Optional, UUIDV4 } from 'sequelize';
 import { dbConnection } from '../database';
 
-interface FollowingAttributes {
+export interface FollowingAttributes {
   id: string;
   follower_id: string;
-  following_id: string;
+  followed_id: string;
   unfollowed: boolean;
 }
 
@@ -15,7 +15,7 @@ type FollowingCreationAttributes = Optional<FollowingAttributes, "id">
 class Following extends Model<FollowingAttributes, FollowingCreationAttributes> {
   declare id: string;
   declare follower_id: string;
-  declare following_id: string;
+  declare followed_id: string;
   declare unfollowed: boolean;
 }
 
@@ -34,7 +34,7 @@ Following.init(
         notEmpty: true,
       },
     },
-    following_id: {
+    followed_id: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -52,7 +52,7 @@ Following.init(
   },
   {
     sequelize: dbConnection,
-    tableName: 'users',
+    tableName: 'following',
     timestamps: false,
   }
 );
