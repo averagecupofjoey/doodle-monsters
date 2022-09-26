@@ -41,9 +41,18 @@ export default function ProfilePage({ cards }: ProfilePageProps) {
           </Button>
         </Grid.Col>
         <Grid.Col span={6}>
-          <Button compact fullWidth>
-            Collected
-          </Button>
+          <Link
+            href={{
+              pathname: `/profile/[profilename]/collected`,
+              query: {
+                profilename: profileName,
+              },
+            }}
+          >
+            <Button compact fullWidth>
+              Collected
+            </Button>
+          </Link>
         </Grid.Col>
       </Grid>
       <h1>This is {profileName} </h1>
@@ -98,6 +107,6 @@ export async function getServerSideProps(context) {
   cards = JSON.parse(JSON.stringify(cards));
 
   return {
-    props: { cards }, // will be passed to the page component as props
+    props: { cards, profileName }, // will be passed to the page component as props
   };
 }
