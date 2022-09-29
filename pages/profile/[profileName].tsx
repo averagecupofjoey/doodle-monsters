@@ -14,6 +14,7 @@ import CardGrid from '../../components/CardGrid';
 
 import { useState, useCallback, useEffect } from 'react';
 import { dbConnection } from '../../server/database';
+import axios from 'axios';
 
 interface UpvoteProps {
   upvoteCount: number;
@@ -27,6 +28,9 @@ interface ProfilePageProps {
   collectedCards: (CardAttributes & UpvoteProps)[];
   followingInfo: FollowingAttributes[];
   followedInfo: FollowingAttributes[];
+  session: any;
+  profileUser: any;
+  profileFollowed: any;
 }
 
 export default function ProfilePage({
@@ -34,25 +38,86 @@ export default function ProfilePage({
   collectedCards,
   followingInfo,
   followedInfo,
+  session,
+  profileUser,
+  profileFollowed,
 }: ProfilePageProps) {
   const [profileView, setProfileView] = useState('created');
+  const [followingStatus, setFollowingStatus] = useState('');
+  const [numFollowers, setNumFollowers] = useState(null);
+  const [numFollowing, setNumFollowing] = useState(null);
   const router = useRouter();
   const { profileName } = router.query;
 
-  console.log('######', followedInfo);
+  let followersNum = followedInfo.length;
+  let followingNum = followingInfo.length;
+
+  const toggleFollow = function (user_id, profile_id) {
+    console.log('toggling follow');
+    axios
+      .put('/api/togglefollow', { user_id, profile_id })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  };
+
+  useEffect(() => {
+    if (profileFollowed) {
+      setFollowingStatus('Following');
+    }
+
+    if (session.id !== profileUser.id && profileFollowed === null) {
+      setFollowingStatus('Not Following');
+    }
+
+    setNumFollowers(followersNum);
+    setNumFollowing(followingNum);
+  }, [profileFollowed, followersNum, followingNum]);
 
   return (
     <Layout title='Profile page'>
       <Grid justify='space-between' align='center'>
-        <Grid.Col span={4}>Profile Image</Grid.Col>
+        <Grid.Col span={4}>
+          Profile Image
+          {followingStatus !== '' && (
+            <Button
+              compact
+              onClick={() => {
+                toggleFollow(session.id, profileUser.id);
+                if (followingStatus === 'Following') {
+                  // let updatedFollowers = followedInfo.length--;
+                  // console.log(updatedFollowers);
+                  // console.log('###### before unfollow', followersNum);
+                  // followersNum = followersNum -= 1;
+                  setNumFollowers(numFollowers - 1);
+                  setFollowingStatus('Not Following');
+                  // console.log('##### after unfollow', followersNum);
+                } else {
+                  // let updatedFollowers = followedInfo.length++;
+                  // console.log(updatedFollowers);
+                  // console.log('###### before follow', followersNum);
+                  // followersNum = followersNum += 1;
+                  setNumFollowers(numFollowers + 1);
+                  setFollowingStatus('Following');
+                  // console.log('##### after follow', followersNum);
+                }
+              }}
+            >
+              {followingStatus}
+            </Button>
+          )}
+        </Grid.Col>
         <Grid.Col span={4}>
           <Button compact onClick={() => setProfileView('followers')}>
-            {followedInfo.length} Followers
+            {numFollowers} Followers
           </Button>
         </Grid.Col>
         <Grid.Col span={4}>
           <Button compact onClick={() => setProfileView('following')}>
-            {followingInfo.length} Following
+            {numFollowing} Following
           </Button>
         </Grid.Col>
       </Grid>
@@ -169,17 +234,17 @@ export async function getServerSideProps(context) {
   });
 
   //find the id of the profile name
-  let user = await User.findOne({
+  let profileUser = await User.findOne({
     where: {
       username: profileName,
     },
   });
 
-  user = JSON.parse(JSON.stringify(user));
+  profileUser = JSON.parse(JSON.stringify(profileUser));
 
   let followedInfo = await Following.findAll({
     where: {
-      followed_id: user.id,
+      followed_id: profileUser.id,
       unfollowed: false,
     },
     // attributes: {
@@ -199,7 +264,7 @@ export async function getServerSideProps(context) {
 
   let followingInfo = await Following.findAll({
     where: {
-      follower_id: user.id,
+      follower_id: profileUser.id,
       unfollowed: false,
     },
     // attributes: {
@@ -218,18 +283,36 @@ export async function getServerSideProps(context) {
   });
 
   let collectedCards = await dbConnection.query<Card>(
-    COLLECTED_CARDS_QUERY(user.id, session.id),
+    COLLECTED_CARDS_QUERY(profileUser.id, session.id),
     {
       type: QueryTypes.SELECT,
     }
   );
 
+  let profileFollowed = await Following.findOne({
+    where: {
+      follower_id: session.id,
+      followed_id: profileUser.id,
+      unfollowed: false,
+    },
+  });
+
   cards = JSON.parse(JSON.stringify(cards));
   collectedCards = JSON.parse(JSON.stringify(collectedCards));
   followingInfo = JSON.parse(JSON.stringify(followingInfo));
   followedInfo = JSON.parse(JSON.stringify(followedInfo));
+  profileFollowed = JSON.parse(JSON.stringify(profileFollowed));
 
   return {
-    props: { cards, profileName, collectedCards, followingInfo, followedInfo }, // will be passed to the page component as props
+    props: {
+      cards,
+      profileName,
+      collectedCards,
+      followingInfo,
+      followedInfo,
+      session,
+      profileUser,
+      profileFollowed,
+    }, // will be passed to the page component as props
   };
 }

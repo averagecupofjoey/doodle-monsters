@@ -25,7 +25,6 @@ Following.init(
       type: DataTypes.STRING,
       unique: true,
       primaryKey: true,
-      defaultValue: UUIDV4()
     },
     follower_id: {
       type: DataTypes.STRING,

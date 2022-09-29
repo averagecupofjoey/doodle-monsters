@@ -35,6 +35,7 @@ export default function CardGrid(props) {
             return (
               <Carousel.Slide>
                 <CompletedCard
+                  key={idx}
                   monsterName={card.monsterName}
                   username={card.userName}
                   img={card.img}
@@ -57,7 +58,7 @@ export default function CardGrid(props) {
 
       <SimpleGrid cols={2}>
         {cardList.map((card, idx) => {
-          console.log(idx, card);
+          // console.log(idx, card);
           return (
             <CompletedCard
               key={idx}
