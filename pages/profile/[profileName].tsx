@@ -19,8 +19,6 @@ import axios from 'axios';
 interface UpvoteProps {
   upvoteCount: number;
   userUpvoteCount?: number;
-  // upvoteDeleted: boolean | null;
-  // Upvotes: Upvote[];
 }
 
 interface ProfilePageProps {
@@ -88,21 +86,11 @@ export default function ProfilePage({
               onClick={() => {
                 toggleFollow(session.id, profileUser.id);
                 if (followingStatus === 'Following') {
-                  // let updatedFollowers = followedInfo.length--;
-                  // console.log(updatedFollowers);
-                  // console.log('###### before unfollow', followersNum);
-                  // followersNum = followersNum -= 1;
                   setNumFollowers(numFollowers - 1);
                   setFollowingStatus('Not Following');
-                  // console.log('##### after unfollow', followersNum);
                 } else {
-                  // let updatedFollowers = followedInfo.length++;
-                  // console.log(updatedFollowers);
-                  // console.log('###### before follow', followersNum);
-                  // followersNum = followersNum += 1;
                   setNumFollowers(numFollowers + 1);
                   setFollowingStatus('Following');
-                  // console.log('##### after follow', followersNum);
                 }
               }}
             >
@@ -128,18 +116,9 @@ export default function ProfilePage({
           </Button>
         </Grid.Col>
         <Grid.Col span={6}>
-          {/* <Link
-            href={{
-              pathname: `/profile/[profilename]/collected`,
-              query: {
-                profilename: profileName,
-              },
-            }}
-          > */}
           <Button compact fullWidth onClick={() => setProfileView('collected')}>
             Collected
           </Button>
-          {/* </Link> */}
         </Grid.Col>
       </Grid>
       <h1>This is {profileName} </h1>
@@ -230,7 +209,6 @@ export async function getServerSideProps(context) {
           : null),
       ],
     },
-    // include: [Upvote],
   });
 
   //find the id of the profile name
@@ -247,19 +225,6 @@ export async function getServerSideProps(context) {
       followed_id: profileUser.id,
       unfollowed: false,
     },
-    // attributes: {
-    //   include: [
-    //     [
-    //       Sequelize.literal(`(
-    //         SELECT count(*)::int
-    //         FROM following
-    //         WHERE following."followed_id" = '${user.id}'
-    //         AND following."unfollowed" = false
-    //       )`),
-    //       'profileFollowerCount',
-    //     ],
-    //   ],
-    // },
   });
 
   let followingInfo = await Following.findAll({
@@ -267,19 +232,6 @@ export async function getServerSideProps(context) {
       follower_id: profileUser.id,
       unfollowed: false,
     },
-    // attributes: {
-    //   include: [
-    //     [
-    //       Sequelize.literal(`(
-    //         SELECT count(*)::int
-    //         FROM following
-    //         WHERE following."follower_id" = '${user.id}'
-    //         AND following."unfollowed" = false
-    //       )`),
-    //       'profileFollowingCount',
-    //     ],
-    //   ],
-    // },
   });
 
   let collectedCards = await dbConnection.query<Card>(
