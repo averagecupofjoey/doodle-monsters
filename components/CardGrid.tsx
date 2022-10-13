@@ -35,7 +35,7 @@ export default function CardGrid(props) {
             return (
               <Carousel.Slide>
                 <CompletedCard
-                  key={idx}
+                  key={`${idx}+a`}
                   monsterName={card.monsterName}
                   username={card.userName}
                   img={card.img}
@@ -61,7 +61,7 @@ export default function CardGrid(props) {
           // console.log(idx, card);
           return (
             <CompletedCard
-              key={idx}
+              key={`${idx}+b`}
               onClick={() => {
                 setCardNum(idx);
                 setOpened(true);
