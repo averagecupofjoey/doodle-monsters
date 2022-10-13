@@ -6,6 +6,8 @@ let getProfileId = async function(profileName){
       username: profileName,
     },
   });
+
+  profileUser = JSON.parse(JSON.stringify(profileUser));
   return profileUser.id
 }
 

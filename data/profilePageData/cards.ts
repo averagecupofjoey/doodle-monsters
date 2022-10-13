@@ -93,6 +93,10 @@ let getProfileCards = async function(session, profileId){
     }
   );
 
+  cards = JSON.parse(JSON.stringify(cards));
+  collectedCards = JSON.parse(JSON.stringify(collectedCards));
+
+
   return {
     cards,
     collectedCards

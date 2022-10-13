@@ -23,6 +23,10 @@ let getFollowingInfo = async function(profileId, session){
     },
   });
 
+  followingInfo = JSON.parse(JSON.stringify(followingInfo));
+  followedInfo = JSON.parse(JSON.stringify(followedInfo));
+  profileFollowed = JSON.parse(JSON.stringify(profileFollowed));
+
   return {
     followedInfo,
     followingInfo,

@@ -1,18 +1,12 @@
-import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { Grid, Button } from '@mantine/core';
 import { useRouter } from 'next/router';
-import Card, { CardAttributes } from '../../server/models/card';
-import Following, { FollowingAttributes } from '../../server/models/following';
-import User from '../../server/models/user';
-import CompletedCard from '../../components/CompletedCard';
-import { useSession, signOut, getSession } from 'next-auth/react';
-import { QueryTypes, Sequelize } from 'sequelize';
-import { Literal } from 'sequelize/types/utils';
+import { CardAttributes } from '../../server/models/card';
+import { FollowingAttributes } from '../../server/models/following';
+import { getSession } from 'next-auth/react';
 import CardGrid from '../../components/CardGrid';
 
-import { useState, useCallback, useEffect } from 'react';
-import { dbConnection } from '../../server/database';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import getProfileCards from '../../data/profilePageData/cards';
@@ -139,7 +133,6 @@ export async function getServerSideProps(context) {
 
   //find the id of the profile name
   let profileId = await getProfileId(profileName);
-  profileId = JSON.parse(JSON.stringify(profileId));
 
   //find the cards and collected cards for the profile
   let { cards, collectedCards } = await getProfileCards(session, profileId);
@@ -149,12 +142,6 @@ export async function getServerSideProps(context) {
     profileId,
     session
   );
-
-  cards = JSON.parse(JSON.stringify(cards));
-  collectedCards = JSON.parse(JSON.stringify(collectedCards));
-  followingInfo = JSON.parse(JSON.stringify(followingInfo));
-  followedInfo = JSON.parse(JSON.stringify(followedInfo));
-  profileFollowed = JSON.parse(JSON.stringify(profileFollowed));
 
   return {
     props: {
