@@ -5,7 +5,6 @@ import { useRouter } from 'next/router';
 import Card, { CardAttributes } from '../../server/models/card';
 import Following, { FollowingAttributes } from '../../server/models/following';
 import User from '../../server/models/user';
-import { SimpleGrid } from '@mantine/core';
 import CompletedCard from '../../components/CompletedCard';
 import { useSession, signOut, getSession } from 'next-auth/react';
 import { QueryTypes, Sequelize } from 'sequelize';
@@ -15,6 +14,10 @@ import CardGrid from '../../components/CardGrid';
 import { useState, useCallback, useEffect } from 'react';
 import { dbConnection } from '../../server/database';
 import axios from 'axios';
+
+import getProfileCards from '../../data/profilePageData/cards';
+import getProfileId from '../../data/profilePageData/profileID';
+import getFollowingInfo from '../../data/profilePageData/followingInformation';
 
 interface UpvoteProps {
   upvoteCount: number;
@@ -27,7 +30,7 @@ interface ProfilePageProps {
   followingInfo: FollowingAttributes[];
   followedInfo: FollowingAttributes[];
   session: any;
-  profileUser: any;
+  profileId: any;
   profileFollowed: any;
 }
 
@@ -37,7 +40,7 @@ export default function ProfilePage({
   followingInfo,
   followedInfo,
   session,
-  profileUser,
+  profileId,
   profileFollowed,
 }: ProfilePageProps) {
   const [profileView, setProfileView] = useState('created');
@@ -67,7 +70,7 @@ export default function ProfilePage({
       setFollowingStatus('Following');
     }
 
-    if (session.id !== profileUser.id && profileFollowed === null) {
+    if (session.id !== profileId && profileFollowed === null) {
       setFollowingStatus('Not Following');
     }
 
@@ -84,7 +87,7 @@ export default function ProfilePage({
             <Button
               compact
               onClick={() => {
-                toggleFollow(session.id, profileUser.id);
+                toggleFollow(session.id, profileId);
                 if (followingStatus === 'Following') {
                   setNumFollowers(numFollowers - 1);
                   setFollowingStatus('Not Following');
@@ -129,125 +132,23 @@ export default function ProfilePage({
     </Layout>
   );
 }
-const COLLECTED_CARDS_QUERY = (userID, loggedUserID) =>
-  `SELECT
-cards.*,
-upvotes.upvoteCount,
-userUpvotes.userUpvoteCount,
-collects.collectedCount,
-userCollected.userCollectedCount
-FROM cards
-INNER JOIN collected on collected.card_id = cards.id AND collected.user_id = '${userID}'
-LEFT JOIN (
-  SELECT card_id, COUNT(*) as upvoteCount
-  FROM upvotes
-  WHERE upvotes.deleted = false
-  GROUP BY card_id
-) upvotes
-ON upvotes.card_id = cards.id
-LEFT JOIN (
-  SELECT card_id, count(*) as userUpvoteCount
-  FROM upvotes
-  WHERE upvotes.user_id = '${loggedUserID}'
-    AND upvotes.deleted = false
-  GROUP BY card_id
-) userUpvotes
-ON userUpvotes.card_id = cards.id
-LEFT JOIN (
-  SELECT card_id, count(*) as collectedCount
-  FROM collected
-  WHERE collected.deleted = false
-  GROUP BY card_id
-) collects
-ON collects.card_id = cards.id
-LEFT JOIN (
-  SELECT card_id, count(*) as userCollectedCount
-  FROM collected
-  WHERE collected.user_id= '${loggedUserID}'
-    AND collected.deleted = false
-  GROUP BY card_id
-) userCollected
-ON userCollected.card_id = cards.id`;
 
 export async function getServerSideProps(context) {
   const session = await getSession(context);
   const profileName = context.params.profileName;
-  let cards = await Card.findAll({
-    where: {
-      userName: profileName,
-    },
-    attributes: {
-      include: [
-        [
-          Sequelize.literal(`(
-                    SELECT COUNT(*)::int
-                    FROM upvotes
-                    WHERE
-                        upvotes."CardId"= "Card".id
-                    AND
-                        upvotes."deleted"= false
-                )`),
-          'upvoteCount',
-        ],
-        ...(session
-          ? [
-              [
-                Sequelize.literal(`(
-                      SELECT count(*)::int
-                      FROM upvotes
-                      WHERE
-                          upvotes."CardId"= "Card".id
-                      AND
-                          upvotes."user_id"= '${session.id}'
-                      AND
-                          upvotes."deleted" = false
-
-                  )`),
-                'userUpvoteCount',
-              ] as [Literal, string],
-            ]
-          : null),
-      ],
-    },
-  });
 
   //find the id of the profile name
-  let profileUser = await User.findOne({
-    where: {
-      username: profileName,
-    },
-  });
+  let profileId = await getProfileId(profileName);
+  profileId = JSON.parse(JSON.stringify(profileId));
 
-  profileUser = JSON.parse(JSON.stringify(profileUser));
+  //find the cards and collected cards for the profile
+  let { cards, collectedCards } = await getProfileCards(session, profileId);
 
-  let followedInfo = await Following.findAll({
-    where: {
-      followed_id: profileUser.id,
-      unfollowed: false,
-    },
-  });
-
-  let followingInfo = await Following.findAll({
-    where: {
-      follower_id: profileUser.id,
-      unfollowed: false,
-    },
-  });
-
-  let collectedCards = await dbConnection.query<Card>(
-    COLLECTED_CARDS_QUERY(profileUser.id, session.id),
-    {
-      type: QueryTypes.SELECT,
-    }
+  //get the following information
+  let { followedInfo, followingInfo, profileFollowed } = await getFollowingInfo(
+    profileId,
+    session
   );
-
-  let profileFollowed = await Following.findOne({
-    where: {
-      follower_id: session.id,
-      followed_id: profileUser.id,
-      unfollowed: false,
-    },
-  });
 
   cards = JSON.parse(JSON.stringify(cards));
   collectedCards = JSON.parse(JSON.stringify(collectedCards));
@@ -263,7 +164,7 @@ export async function getServerSideProps(context) {
       followingInfo,
       followedInfo,
       session,
-      profileUser,
+      profileId,
       profileFollowed,
     }, // will be passed to the page component as props
   };
