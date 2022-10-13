@@ -8,7 +8,7 @@ import {
   Burger,
   Container,
 } from '@mantine/core';
-import { useBooleanToggle } from '@mantine/hooks';
+// import { useBooleanToggle } from '@mantine/hooks';
 import { ChevronDown } from 'tabler-icons-react';
 import { FaPencilAlt } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
@@ -17,6 +17,7 @@ const useStyles = createStyles((theme) => ({
   header: {
     backgroundColor: theme.colors[theme.primaryColor][6],
     borderBottom: 0,
+    // position: sticky,
   },
 
   inner: {

@@ -1,16 +1,14 @@
 .footerMenu {
-  position: fixed;
+  /* position: fixed;
   left: 0;
   bottom: 0;
-  right: 0;
+  right: 0; */
+  /* position: absolute; */
   height: 85px;
   background-color: gray;
   z-index: 1000;
   border: 2px solid black;
   border-radius: 1%;
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
 }
 
 .footerGrid {
@@ -56,9 +54,6 @@
 }
 
 .cardBottom {
-  /* display: flex; */
-  /* align-items: center; */
-  /* justify-content: center; */
   margin-top: 5px;
 }
 
@@ -92,4 +87,12 @@
 
 .appContainer {
   background-color: lightgrey;
+  display: flex;
+  justify-content: center;
+}
+
+.appContent {
+  max-width: 500px;
+  border: 2px solid black;
+
 }
