@@ -7,6 +7,25 @@ import CompletedCard from './CompletedCard';
 import { useRecoilState } from 'recoil';
 import { cardDataState } from './states';
 
+// [{ id:'ABC' }, { id: 'EFG' }]
+// map: { 'ABC': 0, 'EFG': 1}
+
+// [{ id: 'WYX' }, { id:'ABC' }, { id: 'EFG' }]
+// map: { 'WYX': 0, 'ABC': 1, 'EFG': 2}
+
+// initialSlide={map[activeCardID] ?? 0}
+
+// const getMap = (cards: Card[]) => {
+
+//   const map = cards.reduce((currentMap, card, idx) => {
+
+//     return {
+//       ...currentMap,
+//       [card.id]: idx
+//     }
+//   }, {})
+// }
+
 export default function CardGrid(props) {
   const { data: session, status } = useSession();
   const [opened, setOpened] = useState(false);

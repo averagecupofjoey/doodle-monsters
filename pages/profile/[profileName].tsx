@@ -33,6 +33,19 @@ interface ProfilePageProps {
   profileFollowed: any;
 }
 
+const useCardsList = ({ profile_name, session_id }) => {
+  const [{ data, loading, error }, refetch] = useAxios(`/api/cards/list`, {
+    params: { username: profile_name, sessionId: session_id },
+  });
+
+  return {
+    data,
+    error,
+    loading,
+    refetch,
+  };
+};
+
 export default function ProfilePage({
   cards,
   collectedCards,
@@ -63,6 +76,11 @@ export default function ProfilePage({
         console.log(e);
       });
   };
+
+  const { data: cards, refetch: refetchCards } = useCardsList({
+    profile_name: profileName,
+    session_id: session.id,
+  });
 
   useEffect(() => {
     if (profileFollowed) {
@@ -193,45 +211,46 @@ ON userCollected.card_id = cards.id`;
 export async function getServerSideProps(context) {
   const session = await getSession(context);
   const profileName = context.params.profileName;
-  let cards = await Card.findAll({
-    where: {
-      userName: profileName,
-    },
-    attributes: {
-      include: [
-        [
-          Sequelize.literal(`(
-                    SELECT COUNT(*)::int
-                    FROM upvotes
-                    WHERE
-                        upvotes."CardId"= "Card".id
-                    AND
-                        upvotes."deleted"= false
-                )`),
-          'upvoteCount',
-        ],
-        ...(session
-          ? [
-              [
-                Sequelize.literal(`(
-                      SELECT count(*)::int
-                      FROM upvotes
-                      WHERE
-                          upvotes."CardId"= "Card".id
-                      AND
-                          upvotes."user_id"= '${session.id}'
-                      AND
-                          upvotes."deleted" = false
 
-                  )`),
-                'userUpvoteCount',
-              ] as [Literal, string],
-            ]
-          : null),
-      ],
-    },
-    // include: [Upvote],
-  });
+  // let cards = await Card.findAll({
+  //   where: {
+  //     userName: profileName,
+  //   },
+  //   attributes: {
+  //     include: [
+  //       [
+  //         Sequelize.literal(`(
+  //                   SELECT COUNT(*)::int
+  //                   FROM upvotes
+  //                   WHERE
+  //                       upvotes."CardId"= "Card".id
+  //                   AND
+  //                       upvotes."deleted"= false
+  //               )`),
+  //         'upvoteCount',
+  //       ],
+  //       ...(session
+  //         ? [
+  //             [
+  //               Sequelize.literal(`(
+  //                     SELECT count(*)::int
+  //                     FROM upvotes
+  //                     WHERE
+  //                         upvotes."CardId"= "Card".id
+  //                     AND
+  //                         upvotes."user_id"= '${session.id}'
+  //                     AND
+  //                         upvotes."deleted" = false
+
+  //                 )`),
+  //               'userUpvoteCount',
+  //             ] as [Literal, string],
+  //           ]
+  //         : null),
+  //     ],
+  //   },
+  //   // include: [Upvote],
+  // });
 
   //find the id of the profile name
   let profileUser = await User.findOne({
