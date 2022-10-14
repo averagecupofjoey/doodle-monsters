@@ -3,6 +3,7 @@ import { Carousel, useAnimationOffsetEffect, Embla } from '@mantine/carousel';
 import { useSession, signOut, getSession } from 'next-auth/react';
 import { useState, useCallback, useEffect } from 'react';
 import CompletedCard from './CompletedCard';
+import { useElementSize } from '@mantine/hooks';
 
 import { useRecoilState } from 'recoil';
 import { cardDataState } from './states';
@@ -18,10 +19,21 @@ export default function CardGrid(props) {
     setCardList(props.cardList);
   }, [props.cardList]);
 
+  // const {
+  //   ref: containerRef,
+  //   width: containerWidth,
+  //   height: containerHeight,
+  // } = useElementSize();
+
   const TRANSITION_DURATION = 200;
   useAnimationOffsetEffect(embla, TRANSITION_DURATION);
   return (
-    <>
+    // <div className='outerCardGrid' ref={containerRef}>
+    //   {containerWidth && containerHeight && (
+    <div
+      className='cardGrid'
+      // style={{ height: containerHeight, width: containerWidth }}
+    >
       <Modal
         opened={opened}
         size='300px'
@@ -83,6 +95,8 @@ export default function CardGrid(props) {
           );
         })}
       </SimpleGrid>
-    </>
+    </div>
+    //   )}
+    // </div>
   );
 }

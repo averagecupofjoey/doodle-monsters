@@ -27,7 +27,9 @@ export default function IndexPage({ cards }: IndexPageProps) {
   return (
     <Layout title='Home | Next.js + TypeScript Example'>
       {session ? (
-        <button onClick={() => signOut()}>Log Out</button>
+        <div className='profileTop'>
+          <button onClick={() => signOut()}>Log Out</button>
+        </div>
       ) : (
         <button
           onClick={() => {

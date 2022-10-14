@@ -162,12 +162,6 @@ export default function Card({
     userId,
     monsterType
   ) => {
-    // console.log('in saveMonster function');
-    // console.log('monsterName', monsterName);
-    // console.log('username', userName);
-    // console.log('img', img);
-    // console.log('desc', desc);
-    // console.log('userId', userId);
     axios
       .post('/api/createcard', {
         monsterName,

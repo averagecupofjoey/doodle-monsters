@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Layout from '../components/Layout';
 import Card from '../components/Card';
-import { useSession } from 'next-auth/react';
+import { useSession, getSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
@@ -30,5 +30,13 @@ const CreatePage = () => {
     </Layout>
   );
 };
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  return {
+    props: { session }, // will be passed to the page component as props
+  };
+}
 
 export default CreatePage;

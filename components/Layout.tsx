@@ -4,6 +4,8 @@ import Head from 'next/head';
 
 import { HeaderMenu } from './Header';
 import FooterMenu from './Footer';
+import TopNav from './TopNav';
+import BottomNav from './BottomNav';
 
 type Props = {
   children: ReactNode | undefined;
@@ -26,7 +28,8 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
         <meta charSet='utf-8' />
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
       </Head>
-      <HeaderMenu />
+      {/* <HeaderMenu /> */}
+      <TopNav />
       {/* <header>
       <nav>
         <Link href="/">
@@ -51,7 +54,8 @@ const Layout = ({ children, title = 'This is the default title' }: Props) => (
       <hr />
       <span>I'm here to stay (Footer)</span>
     </footer> */}
-      <FooterMenu />
+      {/* <FooterMenu /> */}
+      <BottomNav />
     </div>
   </div>
 );

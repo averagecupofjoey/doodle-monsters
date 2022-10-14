@@ -74,51 +74,57 @@ export default function ProfilePage({
 
   return (
     <Layout title='Profile page'>
-      <Grid justify='space-between' align='center'>
-        <Grid.Col span={4}>
-          Profile Image
-          {followingStatus !== '' && (
+      <div className='profileTop'>
+        <Grid justify='space-between' align='center'>
+          <Grid.Col span={4}>
+            Profile Image {profileName}
+            {followingStatus !== '' && (
+              <Button
+                compact
+                onClick={() => {
+                  toggleFollow(session.id, profileId);
+                  if (followingStatus === 'Following') {
+                    setNumFollowers(numFollowers - 1);
+                    setFollowingStatus('Not Following');
+                  } else {
+                    setNumFollowers(numFollowers + 1);
+                    setFollowingStatus('Following');
+                  }
+                }}
+              >
+                {followingStatus}
+              </Button>
+            )}
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Button compact onClick={() => setProfileView('followers')}>
+              {numFollowers} Followers
+            </Button>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Button compact onClick={() => setProfileView('following')}>
+              {numFollowing} Following
+            </Button>
+          </Grid.Col>
+        </Grid>
+        <Grid grow justify='space-between' align='center'>
+          <Grid.Col span={6}>
+            <Button compact fullWidth onClick={() => setProfileView('created')}>
+              Created
+            </Button>
+          </Grid.Col>
+          <Grid.Col span={6}>
             <Button
               compact
-              onClick={() => {
-                toggleFollow(session.id, profileId);
-                if (followingStatus === 'Following') {
-                  setNumFollowers(numFollowers - 1);
-                  setFollowingStatus('Not Following');
-                } else {
-                  setNumFollowers(numFollowers + 1);
-                  setFollowingStatus('Following');
-                }
-              }}
+              fullWidth
+              onClick={() => setProfileView('collected')}
             >
-              {followingStatus}
+              Collected
             </Button>
-          )}
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <Button compact onClick={() => setProfileView('followers')}>
-            {numFollowers} Followers
-          </Button>
-        </Grid.Col>
-        <Grid.Col span={4}>
-          <Button compact onClick={() => setProfileView('following')}>
-            {numFollowing} Following
-          </Button>
-        </Grid.Col>
-      </Grid>
-      <Grid grow justify='space-between' align='center'>
-        <Grid.Col span={6}>
-          <Button compact fullWidth onClick={() => setProfileView('created')}>
-            Created
-          </Button>
-        </Grid.Col>
-        <Grid.Col span={6}>
-          <Button compact fullWidth onClick={() => setProfileView('collected')}>
-            Collected
-          </Button>
-        </Grid.Col>
-      </Grid>
-      <h1>This is {profileName} </h1>
+          </Grid.Col>
+        </Grid>
+      </div>
+      {/* <h1>This is {profileName} </h1> */}
       {profileView === 'created' && <CardGrid cardList={cards} />}
       {profileView === 'collected' && <CardGrid cardList={collectedCards} />}
       {profileView === 'following' && <h1>Following Grid will go here</h1>}
