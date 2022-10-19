@@ -140,6 +140,19 @@
         border: 1px solid black
 }
 
+.buttonContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+}
+
 body {
   overscroll-behavior: none;
+}
+
+.searchContainer{
+    display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
 }
