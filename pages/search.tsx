@@ -35,8 +35,8 @@ export default function SearchPage() {
             <Chip value='card'>Card Name</Chip>
           </Chip.Group>
           <Button
-            onClick={() => {
-              let searchResponse = search(searchType, searchTerm);
+            onClick={async () => {
+              let searchResponse = await search(searchType, searchTerm);
               setSearchResults(searchResponse);
               console.log('$$$$$', searchResponse);
             }}
@@ -45,8 +45,8 @@ export default function SearchPage() {
           </Button>
         </div>
         {searchResults &&
-          searchResults.list.map((el) => {
-            return <h1>{el}</h1>;
+          searchResults.map((el) => {
+            return <h1>{el.monsterName}</h1>;
           })}
       </Layout>
       <div style={{ height: 1 }}></div>
