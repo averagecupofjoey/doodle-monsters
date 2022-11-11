@@ -23,6 +23,7 @@
 .cardContainer {
   display: flex;
   justify-content: center;
+  flex: 1;
 }
 
 .card {
@@ -33,12 +34,12 @@
   border: 2px solid black;
   border-radius: 2%;
   /* background-color: tan; */
-  aspect-ratio: 1/1.8;
+  /* aspect-ratio: 1/1.8; */
 
 }
 
 .cardImage {
-  height: 56%;
+  height: 45%;
   background-color: white;
 }
 
@@ -93,21 +94,25 @@
   justify-content: center;
   max-height: 100vh;
   min-height: 100vh;
-  overflow: none;
+  overflow: hidden;
 }
 
 .appContent {
   width: 100vw;
   max-width: 500px;
   border: 2px solid black;
-  max-height: 100vh;
-  min-height: 100vh;
-
+  /* max-height: 100vh;
+  min-height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  flex: 1
 }
 
 .cardGrid {
-  height: 64vh;
+  /* height: 64vh; */
   overflow-y: scroll;
+  /* flex: 1; */
+
 }
 
 .topNav {
@@ -119,9 +124,11 @@
 }
 
 .profileTop {
-      height: 15vh;
+      /* height: 15vh; */
         margin-bottom: 2vh;
         margin-top: 2vh;
+
+
 }
 
 .bottomNav {
@@ -148,6 +155,7 @@
 
 body {
   overscroll-behavior: none;
+  overflow: hidden;
 }
 
 .searchContainer{
@@ -155,4 +163,12 @@ body {
       justify-content: center;
       flex-direction: column;
       align-items: center;
+    flex: 1;
+}
+
+.cardGridContainer {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-y: auto;
 }

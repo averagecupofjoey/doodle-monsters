@@ -39,8 +39,9 @@ export default function IndexPage({ cards }: IndexPageProps) {
           Sign In
         </button>
       )}
-
-      <CardGrid cardList={cards}></CardGrid>
+      <div className='cardGridContainer'>
+        <CardGrid cardList={cards}></CardGrid>
+      </div>
     </Layout>
   );
 }

@@ -125,8 +125,16 @@ export default function ProfilePage({
         </Grid>
       </div>
       {/* <h1>This is {profileName} </h1> */}
-      {profileView === 'created' && <CardGrid cardList={cards} />}
-      {profileView === 'collected' && <CardGrid cardList={collectedCards} />}
+      {profileView === 'created' && (
+        <div className='cardGridContainer'>
+          <CardGrid cardList={cards} />
+        </div>
+      )}
+      {profileView === 'collected' && (
+        <div className='cardGridContainer'>
+          <CardGrid cardList={collectedCards} />
+        </div>
+      )}
       {profileView === 'following' && <h1>Following Grid will go here</h1>}
       {profileView === 'followers' && <h1>Followed Grid will go here</h1>}
     </Layout>
