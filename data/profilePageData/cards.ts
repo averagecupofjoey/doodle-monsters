@@ -7,21 +7,21 @@ import { dbConnection } from '../../server/database';
 const COLLECTED_CARDS_QUERY = (userID, loggedUserID) =>
   `SELECT
 cards.*,
-upvotes.upvoteCount,
-userUpvotes.userUpvoteCount,
-collects.collectedCount,
-userCollected.userCollectedCount
+upvotes."upvoteCount",
+userUpvotes."userUpvoteCount",
+collects."collectedCount",
+userCollected."userCollectedCount"
 FROM cards
 INNER JOIN collected on collected.card_id = cards.id AND collected.user_id = '${userID}' AND collected.deleted = false
 LEFT JOIN (
-  SELECT card_id, COUNT(*) as upvoteCount
+  SELECT card_id, COUNT(*)::int as "upvoteCount"
   FROM upvotes
   WHERE upvotes.deleted = false
   GROUP BY card_id
 ) upvotes
 ON upvotes.card_id = cards.id
 LEFT JOIN (
-  SELECT card_id, count(*) as userUpvoteCount
+  SELECT card_id, count(*)::int as "userUpvoteCount"
   FROM upvotes
   WHERE upvotes.user_id = '${loggedUserID}'
     AND upvotes.deleted = false
@@ -29,14 +29,14 @@ LEFT JOIN (
 ) userUpvotes
 ON userUpvotes.card_id = cards.id
 LEFT JOIN (
-  SELECT card_id, count(*) as collectedCount
+  SELECT card_id, count(*)::int as "collectedCount"
   FROM collected
   WHERE collected.deleted = false
   GROUP BY card_id
 ) collects
 ON collects.card_id = cards.id
 LEFT JOIN (
-  SELECT card_id, count(*) as userCollectedCount
+  SELECT card_id, count(*)::int as "userCollectedCount"
   FROM collected
   WHERE collected.user_id= '${loggedUserID}'
     AND collected.deleted = false
