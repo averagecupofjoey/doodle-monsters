@@ -226,7 +226,7 @@ const CompletedCard = ({
 
   return (
     <div className='cardContainer' onClick={onClick}>
-      <div className='card' style={{ backgroundColor: monsterType }}>
+      <div className='cardPreview' style={{ backgroundColor: monsterType }}>
         <div className='cardHeader'>
           <Grid justify='space-between' align='center'>
             {username === null && <Grid.Col span={12}>{monsterName}</Grid.Col>}

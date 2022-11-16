@@ -38,6 +38,16 @@
 
 }
 
+.cardPreview {
+  width: 90%;
+  max-width: 550px;
+  border: 2px solid black;
+  border-radius: 2%;
+  aspect-ratio: 1/1.8;
+  box-shadow: 5px 5px 5px black;
+
+}
+
 .cardImage {
   height: 45%;
   background-color: white;
@@ -164,7 +174,26 @@ body {
       flex-direction: column;
       align-items: center;
     flex: 1;
+    /* background-color: aliceblue; */
+
 }
+
+.searchOptions{
+    display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      width: 98%;
+      background-color: aliceblue;
+    border: 2px solid black;
+    border-radius: 15%;
+    gap: .7rem;
+    padding: .5rem;
+}
+
+/* #searchOptions * {
+  margin-top: 30px;
+} */
 
 .cardGridContainer {
   display: flex;

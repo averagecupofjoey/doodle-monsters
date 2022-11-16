@@ -1,8 +1,8 @@
-import { QueryTypes, Sequelize } from "sequelize";
-import { Literal } from "sequelize/types/utils";
-import Card from "../../server/models/card";
+import { QueryTypes, Sequelize } from 'sequelize';
+import { Literal } from 'sequelize/types/utils';
+import Card from '../../server/models/card';
 
-import { dbConnection } from "../../server/database";
+import { dbConnection } from '../../server/database';
 
 const COLLECTED_CARDS_QUERY = (userID, loggedUserID) =>
   `SELECT
@@ -12,7 +12,7 @@ userUpvotes.userUpvoteCount,
 collects.collectedCount,
 userCollected.userCollectedCount
 FROM cards
-INNER JOIN collected on collected.card_id = cards.id AND collected.user_id = '${userID}'
+INNER JOIN collected on collected.card_id = cards.id AND collected.user_id = '${userID}' AND collected.deleted = false
 LEFT JOIN (
   SELECT card_id, COUNT(*) as upvoteCount
   FROM upvotes
@@ -44,10 +44,8 @@ LEFT JOIN (
 ) userCollected
 ON userCollected.card_id = cards.id`;
 
-
-
-let getProfileCards = async function(session, profileId){
-    let cards = await Card.findAll({
+let getProfileCards = async function (session, profileId) {
+  let cards = await Card.findAll({
     where: {
       userId: profileId,
     },
@@ -63,6 +61,17 @@ let getProfileCards = async function(session, profileId){
                         upvotes."deleted"= false
                 )`),
           'upvoteCount',
+        ],
+        [
+          Sequelize.literal(`(
+                    SELECT COUNT(*)::int
+                    FROM collected
+                    WHERE
+                        collected."CardId"= "Card".id
+                    AND
+                        collected."deleted"= false
+                )`),
+          'collectedCount',
         ],
         ...(session
           ? [
@@ -82,6 +91,24 @@ let getProfileCards = async function(session, profileId){
               ] as [Literal, string],
             ]
           : null),
+        ...(session
+          ? [
+              [
+                Sequelize.literal(`(
+                      SELECT count(*)::int
+                      FROM collected
+                      WHERE
+                          collected."CardId"= "Card".id
+                      AND
+                          collected."user_id"= '${session.id}'
+                      AND
+                          collected."deleted" = false
+
+                  )`),
+                'userCollectedCount',
+              ] as [Literal, string],
+            ]
+          : null),
       ],
     },
   });
@@ -96,11 +123,10 @@ let getProfileCards = async function(session, profileId){
   cards = JSON.parse(JSON.stringify(cards));
   collectedCards = JSON.parse(JSON.stringify(collectedCards));
 
-
   return {
     cards,
-    collectedCards
-  }
-}
+    collectedCards,
+  };
+};
 
-export default getProfileCards
+export default getProfileCards;
