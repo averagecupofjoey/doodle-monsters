@@ -3,10 +3,11 @@ import Layout from '../components/Layout';
 import { useState } from 'react';
 import axios from 'axios';
 import CardGrid from '../components/CardGrid';
+import { getSession, useSession } from 'next-auth/react';
 
-async function search(searchType, searchTerm) {
+async function search(searchType, searchTerm, session) {
   const response = await axios.get('/api/search', {
-    params: { type: searchType, name: searchTerm },
+    params: { type: searchType, name: searchTerm, session: session.id },
   });
   return response.data;
 }
@@ -15,6 +16,8 @@ export default function SearchPage() {
   const [searchType, setSearchType] = useState('user');
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState(null);
+
+  const { data: session } = useSession();
   return (
     <>
       <Layout>
@@ -38,7 +41,11 @@ export default function SearchPage() {
             </Chip.Group>
             <Button
               onClick={async () => {
-                let searchResponse = await search(searchType, searchTerm);
+                let searchResponse = await search(
+                  searchType,
+                  searchTerm,
+                  session
+                );
                 setSearchResults(searchResponse);
                 console.log('$$$$$', searchResponse);
               }}
@@ -60,4 +67,12 @@ export default function SearchPage() {
       <div style={{ height: 1 }}></div>
     </>
   );
+}
+
+export async function getServerSideProps(context) {
+  const session = await getSession(context);
+
+  return {
+    props: { session }, // will be passed to the page component as props
+  };
 }
